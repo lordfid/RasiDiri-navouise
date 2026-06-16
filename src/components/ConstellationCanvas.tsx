@@ -218,9 +218,9 @@ export function ConstellationCanvas({ interactive = false, results }: Constellat
               })}
             </svg>
 
-            {/* Explanation box based on hovered node */}
-            <div className="absolute inset-x-0 bottom-[-40px] flex justify-center py-2 h-24">
-              <div className="w-full text-center max-w-[340px] px-4 backdrop-blur-md bg-slate-900/40 border border-slate-800 rounded-xl py-2 shadow-xl">
+            {/* Explanation box based on hovered node - Positioned safely inside container to prevent cropping on Android */}
+            <div className="absolute inset-x-0 bottom-2 sm:bottom-4 flex justify-center px-4 py-1 h-24">
+              <div className="w-full text-center max-w-[340px] px-3 backdrop-blur-md bg-slate-900/85 border border-slate-800/80 rounded-xl py-2 shadow-xl flex flex-col justify-center">
                 {hoveredNode ? (
                   <motion.div
                     key={hoveredNode.id}

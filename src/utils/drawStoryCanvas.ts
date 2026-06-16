@@ -154,9 +154,13 @@ export function drawStoryCanvas(
       // MBTI Poem Title (Indonesian description)
       ctx.fillStyle = "#e2e8f0"; // slate-200
       let poemFontSize = 36;
-      if (mbtiPoemTitle.length > 30) poemFontSize = 30;
-      if (mbtiPoemTitle.length > 40) poemFontSize = 26;
       ctx.font = `italic ${poemFontSize}px 'Inter', sans-serif`;
+      let poemWidth = ctx.measureText(`"${mbtiPoemTitle}"`).width;
+      while (poemWidth > 900 && poemFontSize > 16) {
+        poemFontSize -= 1;
+        ctx.font = `italic ${poemFontSize}px 'Inter', sans-serif`;
+        poemWidth = ctx.measureText(`"${mbtiPoemTitle}"`).width;
+      }
       ctx.fillText(`"${mbtiPoemTitle}"`, 540, 750);
 
       // 8. Personality Blueprint Card Content Area
@@ -221,14 +225,40 @@ export function drawStoryCanvas(
         ctx.arc(cardX + 65, itemY, 6, 0, Math.PI * 2);
         ctx.fill();
 
+        // Measure widths and adjust font size dynamically to prevent overlapping
+        let labelSize = 23;
+        let valueSize = 23;
+
+        ctx.font = `bold ${labelSize}px 'Fira Code', 'JetBrains Mono', monospace`;
+        let labelWidth = ctx.measureText(m.label).width;
+
+        ctx.font = `bold ${valueSize}px 'Inter', sans-serif`;
+        let valWidth = ctx.measureText(m.val).width;
+
+        const maxAvailableWidth = cardWidth - 170; // 840 - 170 = 670px spacing gap
+
+        while (labelWidth + valWidth + 40 > maxAvailableWidth && (labelSize > 14 || valueSize > 14)) {
+          if (valueSize > labelSize) {
+            valueSize--;
+          } else {
+            labelSize--;
+            valueSize--;
+          }
+          ctx.font = `bold ${labelSize}px 'Fira Code', 'JetBrains Mono', monospace`;
+          labelWidth = ctx.measureText(m.label).width;
+
+          ctx.font = `bold ${valueSize}px 'Inter', sans-serif`;
+          valWidth = ctx.measureText(m.val).width;
+        }
+
         // Label Column
         ctx.fillStyle = "#94a3b8"; // slate-400
-        ctx.font = "bold 23px 'Fira Code', 'JetBrains Mono', monospace";
+        ctx.font = `bold ${labelSize}px 'Fira Code', 'JetBrains Mono', monospace`;
         ctx.fillText(m.label, cardX + 100, itemY);
 
         // Value Column
         ctx.fillStyle = "#f8fafc"; // slate-50
-        ctx.font = "bold 23px 'Inter', sans-serif";
+        ctx.font = `bold ${valueSize}px 'Inter', sans-serif`;
         ctx.textAlign = "right";
         ctx.fillText(m.val, cardX + cardWidth - 60, itemY);
         ctx.textAlign = "left"; // reset

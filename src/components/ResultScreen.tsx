@@ -25,6 +25,62 @@ import {
   DEFENSE_DESCRIPTIONS
 } from "../data/typologyDescriptions";
 
+const SUBSCALE_EXPLANATIONS: Record<string, Record<string, { label: string; desc: string; stereotype: string }>> = {
+  cognitive: {
+    Ni: { label: "Ni (Introverted Intuition)", desc: "Membaca pola tersembunyi, visi jangka panjang, dan korelasi abstrak.", stereotype: "Firasat sunyi 'ini bakal kacau' padahal belum kejadian, tebakan pola besarnya tajam." },
+    Ne: { label: "Ne (Extraverted Intuition)", desc: "Menghubungkan kemungkinan liar, eksplorasi ide melompat, dan inovasi.", stereotype: "Otak meledak ngeluarin belasan ide seliar alien, lompat topik pembicaraan dalam 3 detik." },
+    Si: { label: "Si (Introverted Sensing)", desc: "Menaruh data kenyamanan, arsip ingatan detail masa lalu, dan rutinitas.", stereotype: "Arsip memori detail luar biasa, cemas berlebih jika rutinitas nyaman diubah mendadak." },
+    Se: { label: "Se (Extraverted Sensing)", desc: "Menguji sensasi fisik, peleburan real-time pasrah dengan lingkungan luar.", stereotype: "Spontanitas luar biasa, hajar dulu urusan belakangan, mager akut kalo gak ada aksi." },
+    Ti: { label: "Ti (Introverted Thinking)", desc: "Akurasi arsitektur logika murni untuk konsistensi konseptual internal.", stereotype: "Rela utak-atik coding or teka-teki sendirian di kamar, gemes jika ada argumen tak konsisten." },
+    Te: { label: "Te (Extraverted Thinking)", desc: "Efisiensi terarah, metrik konkret, produktivitas kerja taktis sistematis.", stereotype: "Eksekusi brutal, perasaan dikesampingkan demi tugas cepat beres seefisien mungkin." },
+    Fi: { label: "Fi (Introverted Feeling)", desc: "Menjaga kemurnian batin pribadi, keaslian nilai moral nurani otentik.", stereotype: "Batin sangat sensitif sama kepura-puraan sosial, ogah 'fake' demi sekadar dapet pujian." },
+    Fe: { label: "Fe (Extraverted Feeling)", desc: "Merawat kehangatan relasi sosial, menyelaraskan atmosfer emosional luar.", stereotype: "Sangat peka iklim kelompok, refleks mengalah demi kenyamanan bersama dan menghindari drama." }
+  },
+  enneagram: {
+    "1": { label: "Tipe 1 (The Reformer)", desc: "Integritas moral tinggi, disiplin ketat, bermental mengejar kesempurnaan lurus.", stereotype: "Perfeksionis akut, tersiksa kritik batin sendiri jika ada tugas atau sudut barang kurang rapi." },
+    "2": { label: "Tipe 2 (The Helper)", desc: "Mencurahkan perhatian tulus demi menjaga perasaan orang lain agar dicintai.", stereotype: "Senang menolong tapi rawan capek batin sendiri dan gengsi setengah mati buat minta bantuan balik." },
+    "3": { label: "Tipe 3 (The Achiever)", desc: "Kerja keras mengejar reputasi sukses, validasi, dan produktivitas nyata.", stereotype: "Ambisius mengejar status kerja, merasa tidak berharga jika seharian tidak menghasilkan apa-apa." },
+    "4": { label: "Tipe 4 (The Individualist)", desc: "Mencari keunikan jati diri, mengekspresikan sisi melankolis puitis.", stereotype: "Suka menyendiri dengan selera estetika tinggi, diam-diam mendramatisir kesedihan agar autentik." },
+    "5": { label: "Tipe 5 (The Investigator)", desc: "Mengumpulkan peta teori pengetahuan privat, irit energi interaksi sosial.", stereotype: "Ku-per cerdas pencinta kedalaman teori murni, anti-basa-basi, benci jika privasinya diinvasi." },
+    "6": { label: "Tipe 6 (The Loyalist)", desc: "Menguji loyalitas persahabatan, waspada, menyusun jaring mitigasi cemas.", stereotype: "Skeptis pencari sekuritas, selalu panik diam-diam dan otomatis bikin skenario cadangan." },
+    "7": { label: "Tipe 7 (The Enthusiast)", desc: "Memburu kesenangan petualangan baru, anti-stres, benci terikat aturan.", stereotype: "Mood booster kelompok, fobia kebosanan, otak isinya planning liburan, jajan, dan bersenang-senang." },
+    "8": { label: "Tipe 8 (The Challenger)", desc: "Kemandirian mutlak, pelindung keadilan tegak melawan penindasan.", stereotype: "Mental baja tak kenal takut, gak sudi disetir kekuasaan, tameng pelindung teman-teman terdekat." },
+    "9": { label: "Tipe 9 (The Peacemaker)", desc: "Mengalir menyelaraskan energi tenang, menghindari konfrontasi tegang.", stereotype: "Sangat pasif-selow mengikuti arus, menunda keputusan penting, memendam kesal dalam diam." }
+  },
+  instinct: {
+    sp: { label: "sp (Self-Preservation)", desc: "Fokus keselamatan jasmani, kenyamanan pangan-papan, keuangan tabungan.", stereotype: "Sangat peduli kenyamanan kasur, stok makanan, dana darurat aman, mager keluar sarang." },
+    sx: { label: "sx (Sexual/Intimacy)", desc: "Memburu getaran koneksi intim 1-on-1 intens dan gairah kimiawi batin.", stereotype: "Pencinta deep-talk berdua sampai subuh, menuntut ikatan emosional intens yang membakar jiwa." },
+    so: { label: "so (Social)", desc: "Membaca penempatan diri dalam dinamika jejaring kelompok komunal.", stereotype: "Peduli tempatnya di lingkungan kelompok, senang berorganisasi, butuh kontribusi di masyarakat." }
+  },
+  bigFive: {
+    openness: { label: "Openness (Keterbukaan Ide)", desc: "Kemauan mengeksplorasi konsep seni abstrak, filsafat, teori konseptual.", stereotype: "Suka berimajinasi liar, menyukai pembicaraan bertema eksistensial, hobi mencoba hal yang tidak biasa." },
+    conscientiousness: { label: "Conscientiousness (Keteraturan Rapi)", desc: "Disiplin melunasi tanggung jawab, ketepatan jadwal, kerapian tata kelola.", stereotype: "Tepat waktu, risih jika meja berantakan, stres jika rencana harian digeser tiba-tiba." },
+    extraversion: { label: "Extraversion (Simfoni Komunal)", desc: "Ekspresif menyerap dan mengalirkan energi ke luar, memimpin relasi sosial.", stereotype: "Cepat akrab sama orang baru, baterai diri langsung dicas penuh setelah kumpul di pesta seru." },
+    agreeableness: { label: "Agreeableness (Kehangatan Empati)", desc: "Kecenderungan mendahulukan rasa percaya, pemaaf, dan menolong sesama.", stereotype: "Mudah iba melihat kucing terlantar, paling tersiksa kalau harus berkata tidak pada permintaan orang gila kerja." },
+    neuroticism: { label: "Neuroticism (Sensitivitas Badai)", desc: "Tingkat kerentanan emosional menyerap kekhawatiran dan stres panik batin.", stereotype: "Overthinking chat WhatsApp dibaca doang, panik berlebih, mood swing drastis dalam sekejap." }
+  },
+  decision: {
+    analytical: { label: "Analytical (Gaya Logis)", desc: "Penimbangan logis berdasarkan data kuantitatif akurat objektif.", stereotype: "Membuat tabel pro-kontra or riset review berjam-jam sebelum membeli barang sepele." },
+    valueBased: { label: "Value-Based (Gaya Moral)", desc: "Keputusan harus selaras dengan nilai kebenaran nurani terdalam.", stereotype: "Harus terasa selaras di hati meskipun ditentang majoritas kelompok atau tidak menguntungkan." },
+    fastAction: { label: "Fast-Action (Gaya Spontan)", desc: "Mengutamakan kecepatan kelincahan eksekusi daripada membuang waktu berpikir.", stereotype: "Tancap gas instan begitu dapet ide, urusan salah diperbaiki sambil jalan berkendara." },
+    consensus: { label: "Consensus (Gaya Kolektif)", desc: "Mengejar kemufakatan kelompok, memastikan semua anggota sejalan.", stereotype: "Grup WA harus sepakat 100% dan merasa senang dulu sebelum berani melangkah memutuskan." },
+    riskAware: { label: "Risk-Aware (Gaya Mitigatif)", desc: "Mengutamakan keselamatan jangka panjang, menghindari kerugian fatal.", stereotype: "Selalu berasumsi skenario terburuk bakal terjadi, penuh kecurigaan teoretis sebelum menyetujui." }
+  },
+  relationship: {
+    secureLeaning: { label: "Secure Leaning", desc: "Ikatan emosional hangat mandiri, minim ketakutan penolakan.", stereotype: "Nyaman saling percaya, memberi ruang pribadi tanpa cemas ditinggal pergi." },
+    anxiousLeaning: { label: "Anxious Leaning", desc: "Ketakutan akut akan ditinggalkan, butuh afirmasi kasih konstan.", stereotype: "Spam chat jika tidak dibalas cepat, sensitif terhadap perubahan dingin pasangan." },
+    avoidantLeaning: { label: "Avoidant Leaning", desc: "Menutup benteng privasi ketat, mengandalkan kemandirian ekstrem.", stereotype: "Mundur pelan-pelan menjauh jika relasi terasa terlalu intim atau menuntut komitmen." },
+    fearfulLeaning: { label: "Fearful Leaning", desc: "Pertarungan batin antara rindu keintiman dan trauma takut terluka.", stereotype: "Maju merapat tapi refleks mencakar, fluktuatif menarik-ulur emosional pasangan." }
+  },
+  stress: {
+    flight: { label: "Flight (Pelarian Aman)", desc: "Dorongan melarikan energi batin keluar dari episentrum konflik.", stereotype: "Mundur dari grup, menyalakan game semalaman, mengurung diri melupakan beban." },
+    freeze: { label: "Freeze (Membeku Lumpuh)", desc: "Kelumpuhan respon saraf, ketidakmampuan berpikir atau mengambil tindakan.", stereotype: "Natap tembok kosong berjam-jam, pikiran mendadak blank tak bisa berkata-kata." },
+    hypervigilant: { label: "Hypervigilant (Hiper-Waspada)", desc: "Menaikkan sensitivitas mendeteksi ancaman di sekeliling lingkungan.", stereotype: "Jantung berdegup kencang, over-analisis raut muka lawan bicara, cemas mendadak." },
+    fawn: { label: "Fawn (Penundukan Pasrah)", desc: "Mengorbankan ego menyakiti diri demi menyingkirkan kemarahan luar.", stereotype: "Jadi penurut manis pengalah, langsung minta maaf berkali-kali padahal gak salah." },
+    fight: { label: "Fight (Konfrontasi Amarah)", desc: "Menggerakkan energi agresi kemarahan melindungi batas pertahanan.", stereotype: "Suara meninggi berani berdebat brutal langsung demi membela keadilan pribadinya." }
+  }
+};
+
 interface ResultProps {
   results: FinalQuizResult;
   onRestart: () => void;
@@ -32,7 +88,7 @@ interface ResultProps {
 
 export function ResultScreen({ results, onRestart }: ResultProps) {
   const [showDevAudit, setShowDevAudit] = useState(false);
-  const [activeTab, setActiveTab] = useState<"cahaya" | "perilaku" | "ekosistem">("cahaya");
+  const [activeTab, setActiveTab] = useState<"cahaya" | "perilaku" | "ekosistem" | "metrik">("cahaya");
   const [auditReport] = useState<AuditReport>(() => auditScoring());
   
   // Interactive Explanation States
@@ -273,12 +329,13 @@ export function ResultScreen({ results, onRestart }: ResultProps) {
           )}
         </AnimatePresence>
 
-        {/* BENTO VIEW TABS SELECTOR */}
-        <div className="flex gap-2 p-1 bg-slate-910/60 border border-slate-800 rounded-2xl w-full max-w-md mx-auto justify-between select-none">
+        {/* BENTO VIEW TABS SELECTOR - Responsive layout including Metrik Poin */}
+        <div className="flex flex-wrap sm:flex-nowrap gap-1.5 p-1 bg-slate-900/60 border border-slate-800 rounded-2xl w-full max-w-xl mx-auto justify-center select-none">
           {[
             { id: "cahaya", label: "Cahaya Utama", icon: Sparkles },
             { id: "perilaku", label: "Kutub Kognitif", icon: SlidersHorizontal },
-            { id: "ekosistem", label: "Kompas Perilaku", icon: BookOpen }
+            { id: "ekosistem", label: "Kompas Perilaku", icon: BookOpen },
+            { id: "metrik", label: "Metrik Poin", icon: Layers }
           ].map(tab => {
             const Icon = tab.icon;
             const isAct = activeTab === tab.id;
@@ -286,10 +343,10 @@ export function ResultScreen({ results, onRestart }: ResultProps) {
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id as any)}
-                className={`flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-display font-semibold uppercase tracking-wider transition-all cursor-pointer ${
+                className={`flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl text-[10px] sm:text-xs font-display font-semibold uppercase tracking-wider transition-all cursor-pointer flex-1 min-w-[100px] sm:min-w-0 ${
                   isAct 
                     ? "bg-indigo-600 font-bold text-white shadow-lg shadow-indigo-500/10" 
-                    : "text-slate-400 hover:text-white"
+                    : "text-slate-400 hover:text-white bg-slate-950/20"
                 }`}
               >
                 <Icon className="w-3.5 h-3.5" />
@@ -659,6 +716,199 @@ export function ResultScreen({ results, onRestart }: ResultProps) {
                 </div>
               </div>
             </>
+          )}
+
+          {/* TAB 4: METRIK POIN DETIL - Detailed, interactive, and beautifully explained point system */}
+          {activeTab === "metrik" && (
+            <div className="md:col-span-3 space-y-6">
+              {/* Metrik Header Card */}
+              <div className="backdrop-blur-md bg-slate-900/40 border border-slate-800 rounded-3xl p-6 relative overflow-hidden">
+                <div className="absolute top-0 right-0 w-64 h-64 bg-indigo-500/5 rounded-full blur-3xl pointer-events-none" />
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="p-2.5 bg-indigo-500/10 rounded-2xl border border-indigo-500/20">
+                    <Layers className="w-6 h-6 text-indigo-400" />
+                  </div>
+                  <div>
+                    <h3 className="font-display text-lg font-bold text-white tracking-wide">Peta Arsip Poin & Rasi Batin</h3>
+                    <p className="text-xs text-slate-400 mt-0.5">Analisis kuantitatif total poin subskala yang terkumpul dari seluruh jawaban kuesioner Anda beserta penjelasannya.</p>
+                  </div>
+                </div>
+                <p className="text-xs text-slate-400 leading-relaxed max-w-3xl">
+                  Setiap butir kuesioner menimbang kecenderungan batin Anda melalui distribusi bobot poin ke berbagai klasifikasi tipologi psikologi secara simultan. Berikut adalah perolehan total poin absolut batin Anda beserta stereotip kuat beralaskan ilmiah untuk mendedah rahasia di balik rasi angka-angka tersebut.
+                </p>
+              </div>
+
+              {/* Grid of point families */}
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                
+                {/* 1. COGNITIVE FAMILY */}
+                <div className="backdrop-blur-md bg-slate-900/30 border border-slate-800 rounded-3xl p-6 space-y-4">
+                  <div className="flex items-center gap-2 pb-2 border-b border-slate-800/60">
+                    <Brain className="w-5 h-5 text-indigo-400" />
+                    <h4 className="font-display font-semibold text-white tracking-wide">Dinamika Fungsi Kognitif (MBTI)</h4>
+                  </div>
+                  <p className="text-[11px] text-slate-400 font-mono">Total akumulasi pembobotan muatan fungsi kognitif batin:</p>
+                  <div className="space-y-4">
+                    {Object.entries(SUBSCALE_EXPLANATIONS.cognitive).map(([key, data]) => {
+                      const scoreVal = Math.round((results.rawScores?.cognitive?.[key as any] || 0) * 10) / 10;
+                      const percent = Math.min(100, Math.max(5, (scoreVal / 50) * 100));
+                      return (
+                        <div key={key} className="space-y-1.5 p-3 rounded-2xl bg-slate-950/40 border border-slate-900/60 hover:border-slate-800 transition-all">
+                          <div className="flex justify-between items-center text-xs font-mono">
+                            <span className="font-semibold text-slate-200">{data.label}</span>
+                            <span className="font-bold text-indigo-400 bg-indigo-950/40 px-2 py-0.5 rounded border border-indigo-900/30">{scoreVal} pt</span>
+                          </div>
+                          {/* Progress bar */}
+                          <div className="h-1.5 w-full bg-slate-950 rounded-full overflow-hidden">
+                            <div className="h-full bg-gradient-to-r from-indigo-500 to-indigo-455 rounded-full" style={{ width: `${percent}%` }} />
+                          </div>
+                          <p className="text-[10px] text-slate-300 leading-normal font-display">
+                            {data.desc}
+                          </p>
+                          <p className="text-[10px] text-indigo-300/90 leading-normal font-display mt-1 bg-indigo-950/25 p-1.5 rounded border border-indigo-900/10">
+                            <strong>Stereotip Nyata:</strong> &ldquo;{data.stereotype}&rdquo;
+                          </p>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                {/* 2. ENNEAGRAM FAMILY */}
+                <div className="backdrop-blur-md bg-slate-900/30 border border-slate-800 rounded-3xl p-6 space-y-4">
+                  <div className="flex items-center gap-2 pb-2 border-b border-slate-800/60">
+                    <Compass className="w-5 h-5 text-rose-400" />
+                    <h4 className="font-display font-semibold text-white tracking-wide">Spektrum Tipe Enneagram</h4>
+                  </div>
+                  <p className="text-[11px] text-slate-400 font-mono">Kekuatan pilar motivasi dasar penggerak ego harian Anda:</p>
+                  <div className="space-y-4">
+                    {Object.entries(SUBSCALE_EXPLANATIONS.enneagram).map(([key, data]) => {
+                      const scoreVal = Math.round((results.rawScores?.enneagram?.[key as any] || 0) * 10) / 10;
+                      const percent = Math.min(100, Math.max(5, (scoreVal / 50) * 100));
+                      return (
+                        <div key={key} className="space-y-1.5 p-3 rounded-2xl bg-slate-950/40 border border-slate-900/60 hover:border-slate-800 transition-all">
+                          <div className="flex justify-between items-center text-xs font-mono">
+                            <span className="font-semibold text-slate-200">{data.label}</span>
+                            <span className="font-bold text-rose-400 bg-rose-950/40 px-2 py-0.5 rounded border border-rose-900/30">{scoreVal} pt</span>
+                          </div>
+                          {/* Progress bar */}
+                          <div className="h-1.5 w-full bg-slate-950 rounded-full overflow-hidden">
+                            <div className="h-full bg-gradient-to-r from-rose-500 to-rose-455 rounded-full" style={{ width: `${percent}%` }} />
+                          </div>
+                          <p className="text-[10px] text-slate-300 leading-normal font-display">
+                            {data.desc}
+                          </p>
+                          <p className="text-[10px] text-rose-300/90 leading-normal font-display mt-1 bg-rose-950/25 p-1.5 rounded border border-rose-900/10">
+                            <strong>Stereotip Nyata:</strong> &ldquo;{data.stereotype}&rdquo;
+                          </p>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                {/* 3. BIG FIVE FAMILY */}
+                <div className="backdrop-blur-md bg-slate-900/30 border border-slate-800 rounded-3xl p-6 space-y-4">
+                  <div className="flex items-center gap-2 pb-2 border-b border-slate-800/60">
+                    <Sparkles className="w-5 h-5 text-emerald-400" />
+                    <h4 className="font-display font-semibold text-white tracking-wide">Spektrum Trait Karakter (Big Five)</h4>
+                  </div>
+                  <p className="text-[11px] text-slate-400 font-mono">Skor kecenderungan perangai biologis fungsional diri:</p>
+                  <div className="space-y-4">
+                    {Object.entries(SUBSCALE_EXPLANATIONS.bigFive).map(([key, data]) => {
+                      const scoreVal = Math.round((results.rawScores?.bigFive?.[key as any] || 0) * 10) / 10;
+                      const percent = Math.min(100, Math.max(5, (scoreVal / 50) * 100));
+                      return (
+                        <div key={key} className="space-y-1.5 p-3 rounded-2xl bg-slate-950/40 border border-slate-900/60 hover:border-slate-800 transition-all">
+                          <div className="flex justify-between items-center text-xs font-mono">
+                            <span className="font-semibold text-slate-200">{data.label}</span>
+                            <span className="font-bold text-emerald-400 bg-emerald-950/40 px-2 py-0.5 rounded border border-emerald-900/30">{scoreVal} pt</span>
+                          </div>
+                          {/* Progress bar */}
+                          <div className="h-1.5 w-full bg-slate-950 rounded-full overflow-hidden">
+                            <div className="h-full bg-gradient-to-r from-emerald-500 to-emerald-455 rounded-full" style={{ width: `${percent}%` }} />
+                          </div>
+                          <p className="text-[10px] text-slate-300 leading-normal font-display">
+                            {data.desc}
+                          </p>
+                          <p className="text-[10px] text-emerald-300/90 leading-normal font-display mt-1 bg-emerald-950/25 p-1.5 rounded border border-emerald-900/10">
+                            <strong>Stereotip Nyata:</strong> &ldquo;{data.stereotype}&rdquo;
+                          </p>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                {/* 4. OTHER SUB-PSYCHE METRICS */}
+                <div className="space-y-6">
+                  {/* DECISION FAMILY */}
+                  <div className="backdrop-blur-md bg-slate-900/30 border border-slate-800 rounded-3xl p-6 space-y-4">
+                    <div className="flex items-center gap-2 pb-2 border-b border-slate-800/60">
+                      <SlidersHorizontal className="w-5 h-5 text-yellow-400" />
+                      <h4 className="font-display font-semibold text-white tracking-wide">Peneropong Gaya Keputusan</h4>
+                    </div>
+                    <div className="space-y-3.5">
+                      {Object.entries(SUBSCALE_EXPLANATIONS.decision).map(([key, data]) => {
+                        const scoreVal = Math.round((results.rawScores?.decision?.[key as any] || 0) * 10) / 10;
+                        const percent = Math.min(100, Math.max(5, (scoreVal / 25) * 100));
+                        return (
+                          <div key={key} className="space-y-1.5 p-3 rounded-2xl bg-slate-950/40 border border-slate-900/60 hover:border-slate-800 transition-all">
+                            <div className="flex justify-between items-center text-xs font-mono">
+                              <span className="font-semibold text-slate-200">{data.label}</span>
+                              <span className="font-bold text-yellow-400 bg-yellow-950/40 px-2 py-0.5 rounded border border-yellow-900/30">{scoreVal} pt</span>
+                            </div>
+                            {/* Progress bar */}
+                            <div className="h-1.5 w-full bg-slate-950 rounded-full overflow-hidden">
+                              <div className="h-full bg-gradient-to-r from-yellow-500 to-yellow-450 rounded-full" style={{ width: `${percent}%` }} />
+                            </div>
+                            <p className="text-[10px] text-slate-300 leading-normal font-display">
+                              {data.desc}
+                            </p>
+                            <p className="text-[10px] text-yellow-300/90 leading-normal font-display mt-0.5">
+                              <strong>Khas:</strong> &ldquo;{data.stereotype}&rdquo;
+                            </p>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+
+                  {/* STRESS RESPONSES */}
+                  <div className="backdrop-blur-md bg-slate-900/30 border border-slate-800 rounded-3xl p-6 space-y-4">
+                    <div className="flex items-center gap-2 pb-2 border-b border-slate-800/60">
+                      <ShieldAlert className="w-5 h-5 text-purple-400" />
+                      <h4 className="font-display font-semibold text-white tracking-wide">Pola Respon Stress (Sistem Amigdala)</h4>
+                    </div>
+                    <div className="space-y-3.5">
+                      {Object.entries(SUBSCALE_EXPLANATIONS.stress).map(([key, data]) => {
+                        const scoreVal = Math.round((results.rawScores?.stress?.[key as any] || 0) * 10) / 10;
+                        const percent = Math.min(100, Math.max(5, (scoreVal / 25) * 100));
+                        return (
+                          <div key={key} className="space-y-1.5 p-3 rounded-2xl bg-slate-950/40 border border-slate-900/60 hover:border-slate-800 transition-all">
+                            <div className="flex justify-between items-center text-xs font-mono">
+                              <span className="font-semibold text-slate-200">{data.label}</span>
+                              <span className="font-bold text-purple-400 bg-purple-950/40 px-2 py-0.5 rounded border border-purple-900/30">{scoreVal} pt</span>
+                            </div>
+                            {/* Progress bar */}
+                            <div className="h-1.5 w-full bg-slate-950 rounded-full overflow-hidden">
+                              <div className="h-full bg-gradient-to-r from-purple-500 to-purple-450 rounded-full" style={{ width: `${percent}%` }} />
+                            </div>
+                            <p className="text-[10px] text-slate-300 leading-normal font-display">
+                              {data.desc}
+                            </p>
+                            <p className="text-[10px] text-purple-300/90 leading-normal font-display mt-0.5">
+                              <strong>Insting:</strong> &ldquo;{data.stereotype}&rdquo;
+                            </p>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+            </div>
           )}
 
         </div>

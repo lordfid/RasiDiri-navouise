@@ -789,7 +789,8 @@ export function calculateResults(answers: Record<string, string>): FinalQuizResu
     idealPartnerTendency,
     preferredLoveStyle,
     preferredEnvironment,
-    confidence
+    confidence,
+    rawScores: raw
   };
 }
 
@@ -867,6 +868,7 @@ function getFallbackResult(): FinalQuizResult {
       score: 20,
       category: "lemah",
       notes: ["Anda belum memilih kuesioner apa pun."]
-    }
+    },
+    rawScores: undefined
   };
 }

@@ -261,4 +261,5 @@ export interface FinalQuizResult {
     category: "lemah" | "sedang" | "cukup kuat" | "kuat" | "sangat kuat";
     notes: string[];
   };
+  rawScores?: RawScores;
 }
