@@ -9,32 +9,28 @@ export const questionItemsTieBreak: QuestionItem[] = [
   {
     id: "tie_001",
     kind: "singleChoice",
-    domain: "scheduling_surprise",
-    prompt: "Ketika jadwal pertemuan penting yang sudah kamu siapkan rapi dibatalkan sepihak oleh klien hanya 15 menit sebelum acara, bagaimana sirkulasi batinmu bereaksi?",
-    instruction: "Pilih muara ketenangan kustom batinmu.",
-    reliability: 0.93,
-    targetSystems: ["cognitive", "bigFive", "enneagram"],
+    domain: "ni_vs_ne",
+    prompt: "Ketika merenungkan suatu misteri kehidupan atau arah masa depan, bagaimana rasi pikiran bawah sadarmu beroperasi secara naluriah?",
+    instruction: "Pilih muara jelajah intuisi primalmu.",
+    reliability: 0.95,
+    targetSystems: ["cognitive", "bigFive"],
     options: [
       {
         id: "a",
-        text: "Merasakan kekesalan mendalam; penataan waktu hidupku jadi porak-poranda dan aku harus menjadwal ulang elemen-elemen harianku yang berharga.",
-        subtleMeaning: "Tingginya ketergantungan pada penutupan rencana teratur, low openness to disruption (J, Si/Te).",
+        text: "Mengerucutkan perhatian ke satu visi atau makna mendalam; bersandar pada rabaan intuisi sejati yang melihat struktur 'kebenaran tunggal' di balik layar.",
+        subtleMeaning: "Introverted Intuition (Ni) - Pemusatan visi abstrak teoretis.",
         weights: {
-          mbtiAxis: { J: 1.2, P: -1.2 },
-          cognitive: { Si: 0.8, Te: 0.8 },
-          bigFive: { conscientiousness: 0.8 },
-          evidence: { lowDisruptionTolerance: 1.2 }
+          cognitive: { Ni: 1.5, Ne: -1.0 },
+          bigFive: { openness: 1.1 }
         }
       },
       {
         id: "b",
-        text: "Menghela napas santai; bagiku slot waktu kosong ini adalah berkah tak terhindarkan untuk beristirahat sunyi atau mengulik hal liar lain.",
-        subtleMeaning: "Toleransi tinggi pada fluktuasi agenda harian, fleksibilitas spontan (P, Ne/Se).",
+        text: "Melentingkan pikiran ke jaring alternatif kemungkinan yang bercabang lebar; gemar bereksperimen dengan berbagai ide tak terduga secara dinamis.",
+        subtleMeaning: "Extroverted Intuition (Ne) - Divergensi eksplorasi skenario spekulatif.",
         weights: {
-          mbtiAxis: { P: 1.2, J: -1.2 },
-          cognitive: { Ne: 0.8, Se: 0.8 },
-          bigFive: { conscientiousness: -0.7 },
-          evidence: { highDisruptionTolerance: 1.2 }
+          cognitive: { Ne: 1.5, Ni: -1.0 },
+          bigFive: { openness: 1.1 }
         }
       }
     ]
@@ -42,32 +38,28 @@ export const questionItemsTieBreak: QuestionItem[] = [
   {
     id: "tie_002",
     kind: "singleChoice",
-    domain: "sudden_double_date",
-    prompt: "Sahabatmu mengajakmu mendadak menemani mereka double-date dengan kenalan baru mereka malam ini. Apa putusan naluriah tersembunyimu?",
-    instruction: "Pilih respon spontan sosiabelmu.",
-    reliability: 0.89,
-    targetSystems: ["bigFive", "instinct", "disc"],
+    domain: "si_vs_se",
+    prompt: "Bagaimana caramu memetakan realitas indrawi yang paling murni dan membuatmu merasa hidup seutuhnya?",
+    instruction: "Pilih penjelajahan stimulasi ragamu.",
+    reliability: 0.94,
+    targetSystems: ["cognitive", "bigFive"],
     options: [
       {
         id: "a",
-        text: "Menolaknya; aku benci bertransaksi basa-basi yang dipaksakan di meja makan sosial malam ini bersama orang asing.",
-        subtleMeaning: "Penghindaran pendedahan energi sosial, kenyamanan isolasi (I, sp, low extraversion).",
+        text: "Menyandarkan kenyamanan pada presisi memori dan pengalaman pribadi; merujuk pada kenyamanan historis yang akrab dan detail yang terbukti konsisten.",
+        subtleMeaning: "Introverted Sensing (Si) - Pengarsipan data sensoris subyektif historis.",
         weights: {
-          mbtiAxis: { I: 1.1, E: -1.0 },
-          bigFive: { extraversion: -1.0 },
-          instinct: { sp: 1.0, so: -0.9 },
-          evidence: { avoidSuddenSocialTable: 1.2 }
+          cognitive: { Si: 1.5, Se: -1.0 },
+          bigFive: { conscientiousness: 0.9 }
         }
       },
       {
         id: "b",
-        text: "Menyetujuinya seketika; kesempatan mencicipi restoran baru sembari mengamati karakter pasangan baru terasa seru dan memantik energi obrolan.",
-        subtleMeaning: "Keterbukaan tinggi pada asimilasi kegembiraan eksternal (E, so/sx, extraversion tinggi).",
+        text: "Menenggelamkan diri langsung dalam dinamika raga saat ini; menyukai refleks spontan dari petualangan nyata dan sentuhan indrawi dunia apa adanya.",
+        subtleMeaning: "Extroverted Sensing (Se) - Koneksi indrawi dinamis tak berjarak.",
         weights: {
-          mbtiAxis: { E: 1.1, I: -1.0 },
-          bigFive: { extraversion: 1.0 },
-          instinct: { so: 0.9, sx: 0.7 },
-          evidence: { embraceSuddenSocialTable: 1.2 }
+          cognitive: { Se: 1.5, Si: -1.0 },
+          bigFive: { extraversion: 0.8 }
         }
       }
     ]
@@ -75,32 +67,28 @@ export const questionItemsTieBreak: QuestionItem[] = [
   {
     id: "tie_003",
     kind: "singleChoice",
-    domain: "intellectual_scrutiny",
-    prompt: "Ketika ada orang yang mengajukan argumen filsafat atau fakta sains yang sangat cacat logikanya di media sosial, apa hasrat pertama jemarimu?",
-    instruction: "Pilih kecenderungan respons kognitifmu.",
-    reliability: 0.91,
-    targetSystems: ["cognitive", "enneagram", "communication"],
+    domain: "ti_vs_te",
+    prompt: "Saat harus membedah dan menyelesaikan suatu masalah analisis yang berat, mana yang merupakan muara kepuasan logismu?",
+    instruction: "Pilih rute perakitan arsitektur penalaranmu.",
+    reliability: 0.96,
+    targetSystems: ["cognitive", "values"],
     options: [
       {
         id: "a",
-        text: "Mengetik sanggahan detail, menyodorkan rujukan studi, mematikan cacat pikirnya agar distorsi kebenaran tidak menyebar luas.",
-        subtleMeaning: "Dorongan mendalam meluruskan arsitektur kebenaran eksternal (Ti/Te, direct, Enneagram 1/5).",
+        text: "Membangun cetak biru pemikiran mandiri; membongkar prasangka demi menemukan keselarasan struktur penalaran yang logis secara presisi.",
+        subtleMeaning: "Introverted Thinking (Ti) - Validitas deduktif struktural internal.",
         weights: {
-          cognitive: { Ti: 0.9, Te: 0.8 },
-          communication: { direct: 1.0, analytical: 1.0 },
-          enneagram: { "1": 0.9, "5": 0.8 },
-          evidence: { activeTruthCorrection: 1.2 }
+          cognitive: { Ti: 1.5, Te: -1.0 },
+          values: { competence: 1.2 }
         }
       },
       {
         id: "b",
-        text: "Mengabaikannya sembari tersenyum kecut; aku merasa tidak dibayar korporasi mana pun untuk memintarkan kepala orang asing di internet.",
-        subtleMeaning: "Penyelamatan kemapanan batin privat, pengabaian tak acuh (indifferent AP, sp, Enneagram 9/5).",
+        text: "Mengandalkan kelancaran prosedur operasional luar; mengatur langkah taktis yang efisien serta menggerakkan berbagai sumber daya demi penyelesaian riil.",
+        subtleMeaning: "Extroverted Thinking (Te) - Utilitas induktif efisiensi operasional.",
         weights: {
-          communication: { analytical: -0.5 },
-          enneagram: { "9": 1.1, "5": 1.0 },
-          instinct: { sp: 1.1 },
-          evidence: { detachedTruthSpectator: 1.2 }
+          cognitive: { Te: 1.5, Ti: -1.0 },
+          values: { achievement: 1.1 }
         }
       }
     ]
@@ -108,31 +96,28 @@ export const questionItemsTieBreak: QuestionItem[] = [
   {
     id: "tie_004",
     kind: "singleChoice",
-    domain: "group_belonging",
-    prompt: "Apa hal yang paling menyakitkan jika kamu sadar bahwa kamu ditinggalkan dari obrolan grup rahasia batin teman sekantor?",
-    instruction: "Pilih getaran rasa sakit sosial terbesarmu.",
-    reliability: 0.90,
-    targetSystems: ["enneagram", "instinct", "relationship"],
+    domain: "fi_vs_fe",
+    prompt: "Ketika batinmu memproses nilai kebaikan moral di tengah lingkungan sosial, kearah mana kompas empatimu condong?",
+    instruction: "Pilih garis penyeimbang getaran rasa.",
+    reliability: 0.95,
+    targetSystems: ["cognitive", "bigFive"],
     options: [
       {
         id: "a",
-        text: "Kehilangan rasa memiliki (belonging); aku merasa tidak disukai, terbuang dari benteng rasa aman kelompok yang kuanggap rumah kedua.",
-        subtleMeaning: "Trisula hati anxious, penolakan ikatan kebersamaan (anxiousLeaning, so, Enneagram 2/6/9).",
+        text: "Setia pada kejujuran emosi batin dan jati diri; mempertahankan keyakinan moral pribadi sekalipun berbeda arah dengan standar sosial umum.",
+        subtleMeaning: "Introverted Feeling (Fi) - Kejujuran individualitas nilai batin.",
         weights: {
-          relationship: { anxiousLeaning: 1.2 },
-          instinct: { so: 1.2 },
-          enneagram: { "2": 0.8, "6": 0.8, "9": 0.8 },
-          evidence: { groupBelongingFrustration: 1.2 }
+          cognitive: { Fi: 1.5, Fe: -1.0 },
+          bigFive: { agreeableness: 0.5 }
         }
       },
       {
         id: "b",
-        text: "Kehilangan otonomi pengaruh; aku merasa ketiadaan kehadiranku tidak bergaung bagi mereka, mencederai kredibilitas bernilai diriku.",
-        subtleMeaning: "Dampak status, kebanggaan diri atas visibilitas kompetensi (avoidantLeaning, Enneagram 3/8).",
+        text: "Mengutamakan keharmonisan relasional komunal; peka menyerap atmosfer emosional kelompok dan melaraskan kepentingan bersama secara damai.",
+        subtleMeaning: "Extroverted Feeling (Fe) - Empati interpersonal relasional eksternal.",
         weights: {
-          relationship: { avoidantLeaning: 1.0 },
-          enneagram: { "3": 1.2, "8": 0.8 },
-          evidence: { groupInfluenceFrustration: 1.2 }
+          cognitive: { Fe: 1.5, Fi: -1.0 },
+          bigFive: { agreeableness: 1.2 }
         }
       }
     ]
@@ -140,33 +125,28 @@ export const questionItemsTieBreak: QuestionItem[] = [
   {
     id: "tie_005",
     kind: "singleChoice",
-    domain: "gossip_ethics",
-    prompt: "Seorang kolega kerja menceritakan gosip perselingkuhan pimpinan perusahaan kepadamu. Bagaimana respon batinmu menyeimbangkan fakta itu?",
-    instruction: "Pilih rute asimilasi info sosial sensitif.",
-    reliability: 0.88,
-    targetSystems: ["hexaco", "values", "cognitive"],
+    domain: "dom_aux_axis",
+    prompt: "Dalam eksekusi misi hidupmu, bagaimana caramu menggabungkan dorongan intuisi dengan keputusan fungsionalmu?",
+    instruction: "Pilih rute sinergi penyelesaian masalah Anda.",
+    reliability: 0.93,
+    targetSystems: ["cognitive", "mbtiTypeSupport"],
     options: [
       {
         id: "a",
-        text: "Sangat berselera menyaring rincian ceritanya; ini adalah data sosiologis relasi kekuasaan yang sangat menarik ditelisik polanya.",
-        subtleMeaning: "Navigasi rasa ingin tahu relasi manusiawi (openness, Ne, Investigative).",
+        text: "Menerapkan kerangka analisis logis terencana guna menerjemahkan ide-ide abstrak saya menjadi sistem karya nyata yang terstruktur.",
+        subtleMeaning: "Sinergi Intuisi + Analitis (XNTX cluster).",
         weights: {
-          cognitive: { Ne: 0.8 },
-          bigFive: { openness: 0.8 },
-          hexaco: { honestyHumility: -0.4 },
-          evidence: { rawSocialCuriosityStimulation: 1.1 }
+          cognitive: { Ni: 0.8, Ne: 0.5, Te: 0.8, Ti: 0.5 },
+          mbtiTypeSupport: { INTJ: 1.5, INTP: 1.2, ENTJ: 1.2, ENTP: 0.9 }
         }
       },
       {
         id: "b",
-        text: "Merasakan kekurangnyamanan moral; aku menyela obrolan secara dingin agar menghentikan pergunjingan pribadi yang tidak ada hubungannya dengan hasil kerja.",
-        subtleMeaning: "Tindakan sterilitas moral, pembersihan asertif sirkulasi gosip (Honesty-Humility tinggi, Enneagram 1).",
+        text: "Melaraskan kepekaan perasaan dan empati interpersonal guna mengiringi visi kemanusiaan saya demi menggerakkan kebaikan bersama.",
+        subtleMeaning: "Sinergi Intuisi + Nilai Rasa (XNFX cluster).",
         weights: {
-          hexaco: { honestyHumility: 1.3 },
-          enneagram: { "1": 1.2 },
-          communication: { direct: 0.8 },
-          values: { cleanBehavior: 1.2 },
-          evidence: { standardGossipRefusal: 1.2 }
+          cognitive: { Ni: 0.8, Ne: 0.5, Fe: 0.8, Fi: 0.5 },
+          mbtiTypeSupport: { INFJ: 1.5, INFP: 1.2, ENFJ: 1.2, ENFP: 0.9 }
         }
       }
     ]
@@ -174,30 +154,28 @@ export const questionItemsTieBreak: QuestionItem[] = [
   {
     id: "tie_006",
     kind: "singleChoice",
-    domain: "aesthetic_pulp_vs_art",
-    prompt: "Ketika mengunjungi pameran komik populer vs pameran lukisan abstrak klasik modern, mana yang sebenarnya lebih menyalakan detak jantung keindahanmu?",
-    instruction: "Pilih gravitasi getaran estetik batinmu.",
-    reliability: 0.87,
-    targetSystems: ["cognitive", "bigFive"],
+    domain: "tert_vs_inf",
+    prompt: "Kondisi mana yang menggambarkan dinamika batinmu saat bertransisi dari kestabilan kreatif menuju kecemasan di bawah tekanan tinggi?",
+    instruction: "Pilih skenario fluktuasi ketegangan Anda.",
+    reliability: 0.92,
+    targetSystems: ["cognitive", "stress", "relationship"],
     options: [
       {
         id: "a",
-        text: "Pameran lukisan abstrak klasik modern: setiap sapuan kuas membawa makna sublim, interpretasi berlapis, konsep murni filosofis yang tidak mudah didefinisikan.",
-        subtleMeaning: "Kebutuhan interpretasi metaforis mendalam (Ni, openness tinggi).",
+        text: "Nyaman bermain dengan penalaran konseptual atau gagasan idealis mandiri, namun rentan merasakan kepanikan fisik spontan atau kecemasan ekstrem saat keadaan kacau.",
+        subtleMeaning: "Pola Peredam Tertiary Introverted + Inferior Extroverted Grip.",
         weights: {
-          cognitive: { Ni: 1.0, Ne: 0.5 },
-          bigFive: { openness: 1.2 },
-          evidence: { deepAbstractAestheticGratification: 1.2 }
+          cognitive: { Ti: 0.9, Fi: 0.9, Se: -0.8, Ne: -0.8 },
+          stress: { freeze: 1.1, hypervigilant: 0.9 }
         }
       },
       {
         id: "b",
-        text: "Pameran komik populer: gambaran visual ekspresif, aksi laga langsung yang membakar semangat, alur petualangan terperinci yang menghibur indrawi.",
-        subtleMeaning: "Kepuasan visual sensoris interaktif dinamis (Se, extraversion).",
+        text: "Nyaman merajut relasi yang hangat atau kesenangan estetika interaktif, namun rentan terjebak dalam pemikiran kritis yang kaku atau kecurigaan batin yang obsesif saat tertekan.",
+        subtleMeaning: "Pola Peredam Tertiary Extroverted + Inferior Introverted Grip.",
         weights: {
-          cognitive: { Se: 1.0, Si: 0.5 },
-          bigFive: { openness: 0.3 },
-          evidence: { concreteDirectSensoryGratification: 1.2 }
+          cognitive: { Fe: 0.9, Se: 0.9, Ti: -0.8, Fi: -0.8 },
+          stress: { fight: 1.0, fawn: 1.0 }
         }
       }
     ]
@@ -205,33 +183,27 @@ export const questionItemsTieBreak: QuestionItem[] = [
   {
     id: "tie_007",
     kind: "singleChoice",
-    domain: "rule_breaking_minor",
-    prompt: "Ketika melihat tanda larangan dilarang menginjak rumput taman kota yang sepi sementara jalan setapak memutar sangat jauh dan kamu sedang terburu-buru, bagaimana nuranimu bertarung?",
-    instruction: "Pilih rute kepatuhan operasionalmu.",
-    reliability: 0.90,
-    targetSystems: ["moral", "hexaco", "values"],
+    domain: "opposing_shadow",
+    prompt: "Saat ada orang lain yang menyerang pandangan hidup dasarmu secara terang-terangan, refleks pertahanan bawah sadar apa yang paling pertama bangkit?",
+    instruction: "Pilih tameng pertahanan batin Anda.",
+    reliability: 0.91,
+    targetSystems: ["cognitive", "conflict"],
     options: [
       {
         id: "a",
-        text: "Aku memutar jauh melewati jalan setapak dengan patuh; aturan kecil adalah pilar moral ketertiban publik, melanggarnya adalah bibit kemunduran adab bangsamu.",
-        subtleMeaning: "Integritas moral kaku ruleBased, disiplin tata tertib (ruleBased, Enneagram 1/6, high honesty).",
+        text: "Membangun benteng pertahanan kritis yang tertutup; mempersoalkan motif tersembunyi penyerang dan menarik diri secara dingin dari jalur diskusi demi keutuhan otonomi.",
+        subtleMeaning: "Opposing Role (5th function shadow) - Defense argumen sinis.",
         weights: {
-          moral: { ruleBased: 1.4 },
-          hexaco: { honestyHumility: 1.2, conscientiousness: 1.0 },
-          enneagram: { "1": 1.3, "6": 0.8 },
-          values: { civilityDiscipline: 1.3 },
-          evidence: { absoluteRuleCompliance: 1.2 }
+          cognitive: { Ni: -0.5, Ne: -0.5 },
+          conflict: { competitive: 1.2, avoiding: 0.8 }
         }
       },
       {
         id: "b",
-        text: "Aku melompati rumput tersebut secara cepat; tidak ada polisi, tanah tidak merugi hanya dengan injakan selintas kaki penolong, dan tujuanku jauh melesat cepat.",
-        subtleMeaning: "Pragmatisme utilitas waktu otonom libertarian (libertarian, pragmatist, low honesty).",
+        text: "Mengupayakan pemulihan suasana secepatnya; melunakkan tensi lewat kelenturan diplomasi relasional guna mengembalikan ketenangan sosial bersama.",
+        subtleMeaning: "Kelenturan diplomasi relasional taktis.",
         weights: {
-          moral: { libertarian: 1.3, pragmatist: 1.0 },
-          hexaco: { honestyHumility: -0.8 },
-          values: { efficiencySpeed: 1.2 },
-          evidence: { pragmaticRuleBypass: 1.2 }
+          conflict: { compromising: 1.3, accommodating: 0.8 }
         }
       }
     ]
@@ -239,33 +211,28 @@ export const questionItemsTieBreak: QuestionItem[] = [
   {
     id: "tie_008",
     kind: "singleChoice",
-    domain: "unexpected_emotional_appeal",
-    prompt: "Seseorang yang sering menyindirmu tiba-tiba memelukmu sembari menangis histeris meminta pengampunan dosa darimu di hari buruknya. Apa sirkulasi nalurimu?",
-    instruction: "Pilih rute pengolahan emosional darurat interpersonal.",
-    reliability: 0.92,
-    targetSystems: ["stress", "relationship", "enneagram"],
+    domain: "critical_parent",
+    prompt: "Dengan cara bagaimana suara kritikus batin dalam sanubarimu menghakimi Anda saat mengalami kegagalan?",
+    instruction: "Pilih rute sasaran sensor batin.",
+    reliability: 0.93,
+    targetSystems: ["cognitive", "defense"],
     options: [
       {
         id: "a",
-        text: "Aku merangkulnya balik dengan rasa iba murni, melupakan segala dosanya detik itu juga, tenggelam bersama merawat air matanya.",
-        subtleMeaning: "Respons faun cinta asuhan altruistik lekas (fawn, Enneagram 2/9, high agreeableness).",
+        text: "Menyasar ketulusan hati: merasa diri egois, mementingkan ego pribadi, tidak tulus, atau dituduh merusak ketenangan spritual sesama.",
+        subtleMeaning: "Critical Parent menyasar ranah Perasaan (F).",
         weights: {
-          stress: { fawn: 1.4, freeze: 0.4 },
-          relationship: { secureLeaning: 0.5, anxiousLeaning: 0.5 },
-          enneagram: { "2": 1.3, "9": 1.1 },
-          bigFive: { agreeableness: 1.2 },
-          evidence: { absoluteVisceralEmpathyForgiveness: 1.2 }
+          cognitive: { Fi: -0.8, Fe: -0.8 },
+          defense: { projection: 1.1, repression: 1.0 }
         }
       },
       {
         id: "b",
-        text: "Aku mematung kaku (freeze) karena risih, melepaskan pelukan kasarnya secara asertif diplomatis, lalu menjanjikan obrolan tenang setelah ia mendingin.",
-        subtleMeaning: "Pemberian sekat proteksi ruang batin privat dari kejutan emosi luar (freeze, analytical Ti/Fi, Enneagram 5/8/1).",
+        text: "Menyasar kemampuan logis: merasa gagal merumuskan rencana secara matang, tidak kompeten, ceroboh, atau dituduh memiliki alur pikir yang cacat.",
+        subtleMeaning: "Critical Parent menyasar ranah Berpikir (T).",
         weights: {
-          stress: { freeze: 1.4, fawn: -1.2 },
-          relationship: { avoidantLeaning: 0.9 },
-          enneagram: { "5": 1.2, "8": 0.5, "1": 0.5 },
-          evidence: { boundaryProtectiveCoping: 1.2 }
+          cognitive: { Ti: -0.8, Te: -0.8 },
+          defense: { rationalization: 1.2, projection: 0.8 }
         }
       }
     ]
@@ -273,30 +240,28 @@ export const questionItemsTieBreak: QuestionItem[] = [
   {
     id: "tie_009",
     kind: "singleChoice",
-    domain: "cognitive_clarity_ti_te",
-    prompt: "Bagian mana yang paling memicu kekaguman matamu ketika memandang arsitektur katedral kuno atau gedung pencakar langit modern?",
-    instruction: "Pilih sudut apresiasi kognitif paling murni.",
-    reliability: 0.91,
-    targetSystems: ["cognitive", "values"],
+    domain: "trickster_shadow",
+    prompt: "Dalam hal apa kecerobohan atau ilusi kognitif Anda yang paling sering membuat Anda keliru mengambil keputusan?",
+    instruction: "Pilih rute kerentanan operasional Anda.",
+    reliability: 0.90,
+    targetSystems: ["cognitive", "decision"],
     options: [
       {
         id: "a",
-        text: "Keaslian desain penemuannya secara teoretis; detail arsitektur simitris dalam cetak biru matematika yang memecahkan masalah keseimbangan fisika.",
-        subtleMeaning: "Apresiasi keindahan presisi logika spasial konsep internal (Ti, Investigative).",
+        text: "Sering abai terhadap aturan praktis atau detail fisik nyata di sekeliling; terlalu hanyut meraba kemungkinan abstrak sampai menabrak kenyataan masa kini.",
+        subtleMeaning: "Trickster Se/Si - Kecerobohan detail operasional.",
         weights: {
-          cognitive: { Ti: 1.3, Te: -0.4 },
-          values: { theoreticalSymmetry: 1.2 },
-          evidence: { internalArchitecturalGrasp: 1.1 }
+          cognitive: { Se: -1.2, Si: -1.2 },
+          decision: { fastAction: 1.1, riskAware: -0.8 }
         }
       },
       {
         id: "b",
-        text: "Bagaimana gedung kokoh itu fungsional memproses ribuan manusia setiap harinya, sistem lift cepatnya, kelestarian energi organiknya secara global.",
-        subtleMeaning: "Apresiasi efisiensi utilitas eksternal pemrosesan fungsi (Te, Enterprising/Conventional).",
+        text: "Sering abai terhadap dinamika relasi kekuasaan atau diplomasi basa-basi pergaulan umum; terlalu kaku memegang idealisme murni batin hingga rawan terisolasi.",
+        subtleMeaning: "Trickster Te/Fe - Kecerobohan navigasi eksternal.",
         weights: {
-          cognitive: { Te: 1.3, Ti: -0.4 },
-          values: { operationalEfficiency: 1.2 },
-          evidence: { macroOperationGrasp: 1.1 }
+          cognitive: { Te: -1.2, Fe: -1.2 },
+          decision: { valueBased: 1.1, consensus: -0.8 }
         }
       }
     ]
@@ -304,30 +269,28 @@ export const questionItemsTieBreak: QuestionItem[] = [
   {
     id: "tie_010",
     kind: "singleChoice",
-    domain: "nostalgia_versus_future",
-    prompt: "Pukul 2 pagi di hari menjelang tahun baru, ke arah mana rasi pikiran bawah sadarmu berlayar?",
-    instruction: "Pilih arah penjelajahan waktu jiwamu.",
-    reliability: 0.92,
-    targetSystems: ["cognitive", "enneagram", "bigFive"],
+    domain: "demon_transformation",
+    prompt: "Ketika ego milikmu benar-benar dipojokkan habis-habisan dalam krisis ekstrem, reaksi pelepasan amarah mana yang spontan terjadi?",
+    instruction: "Pilih katarsis emosional pelepasan ketegangan Anda.",
+    reliability: 0.94,
+    targetSystems: ["cognitive", "stress"],
     options: [
       {
         id: "a",
-        text: "Menelusuri riwayat kenangan-kenangan manis masa lalu, menimang barang sejarah lama, menyisakan kesyahduan memori masa kecil.",
-        subtleMeaning: "Fokus koordinat pemeliharaan kenyamanan sejarah indrawi (Si, Enneagram 4/9/6).",
+        text: "Pemutusan ikatan emosi secara dingin dan tajam; membongkar kelemahan fundamental lawan secara verbal dan menghentikan interaksi relasional seutuhnya.",
+        subtleMeaning: "Katarsis Demon Introverted yang dingin dan memutuskankan hubungan mutlak.",
         weights: {
-          cognitive: { Si: 1.3, Ni: -0.5 },
-          enneagram: { "4": 1.0, "9": 0.8, "6": 0.6 },
-          evidence: { anchorHistoryNostalgia: 1.2 }
+          cognitive: { Ti: -1.0, Fi: -1.0 },
+          stress: { fight: 1.2, freeze: 1.0 }
         }
       },
       {
         id: "b",
-        text: "Memproyeksikan cita-cita besar 5 tahun ke depan, menyusun skenario transformasi karir, merakit visi kejayaan otonomi otonomi.",
-        subtleMeaning: "Fokus koordinat penajaman kemajuan masa depan teoritis (Ni/Ne, Enneagram 3/7/8).",
+        text: "Ledakan aksi reaktif di dunia nyata; meluapkan kekesalan lewat respons fisik spontan atas benda-benda sekitar, atau melakukan tindakan reaktif penentangan langsung.",
+        subtleMeaning: "Katarsis Demon Extroverted yang meledak menyasar fisik operasional luar.",
         weights: {
-          cognitive: { Ni: 1.2, Ne: 0.8, Si: -1.0 },
-          enneagram: { "3": 1.2, "7": 0.9, "8": 0.7 },
-          evidence: { focusFutureProjection: 1.2 }
+          cognitive: { Se: -1.0, Te: -1.0 },
+          stress: { fight: 1.5, flight: 0.9 }
         }
       }
     ]

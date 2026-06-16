@@ -11,6 +11,7 @@ import { questionItemsSocialPressure } from "./questionItemsSocialPressure";
 import { questionItemsWorkLearning } from "./questionItemsWorkLearning";
 import { questionItemsMoralStress } from "./questionItemsMoralStress";
 import { questionItemsTieBreak } from "./questionItemsTieBreak";
+import { questionItemsSupporting } from "./questionItemsSupporting";
 
 export const MASTER_QUESTIONS: QuestionItem[] = [
   ...questionItemsCore,             // 001 - 010 (10)
@@ -18,7 +19,8 @@ export const MASTER_QUESTIONS: QuestionItem[] = [
   ...questionItemsRelationship,     // 021 - 030 (10)
   ...questionItemsSocialPressure,   // 031 - 040 (10)
   ...questionItemsWorkLearning,     // 041 - 050 (10)
-  ...questionItemsMoralStress       // 051 - 060 (10)
+  ...questionItemsMoralStress,      // 051 - 060 (10)
+  ...questionItemsSupporting        // 061 - 068 (8 supporting)
 ];
 
 export const TIE_BREAKER_QUESTIONS: QuestionItem[] = [

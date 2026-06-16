@@ -248,13 +248,64 @@ export function calculateResults(answers: Record<string, string>): FinalQuizResu
   };
 
   // 4. Calculate Normalized Scores
-  // A. Cognitive Functions
-  const cognitiveRanking = Object.keys(raw.cognitive).map(func => ({
+  // A. MBTI axis percentages (I_E, S_N, T_F, J_P) first to guide cognitive influence
+  const mbtiAxisNorm = {
+    I: normalize("mbtiAxis", "I", undefined, 50),
+    E: normalize("mbtiAxis", "E", undefined, 50),
+    S: normalize("mbtiAxis", "S", undefined, 50),
+    N: normalize("mbtiAxis", "N", undefined, 50),
+    T: normalize("mbtiAxis", "T", undefined, 50),
+    F: normalize("mbtiAxis", "F", undefined, 50),
+    J: normalize("mbtiAxis", "J", undefined, 50),
+    P: normalize("mbtiAxis", "P", undefined, 50),
+  };
+
+  // Convert axes to relative percentages e.g. Introvert vs Extrovert
+  const calcContrast = (val1: number, val2: number): number => {
+    const total = val1 + val2;
+    if (total === 0) return 50;
+    return Math.round((val1 / total) * 100);
+  };
+
+  const I_E = calcContrast(mbtiAxisNorm.I, mbtiAxisNorm.E); // % of I
+  const S_N = calcContrast(mbtiAxisNorm.S, mbtiAxisNorm.N); // % of S
+  const T_F = calcContrast(mbtiAxisNorm.T, mbtiAxisNorm.F); // % of T
+  const J_P = calcContrast(mbtiAxisNorm.J, mbtiAxisNorm.P); // % of J
+
+  // B. Cognitive Functions influenced by MBTI Axis and Direct Questions
+  const adjustedCognitive: Record<string, number> = {};
+  Object.keys(raw.cognitive).forEach(func => {
+    const baseScore = normalize("cognitive", func, undefined, 50);
+
+    // I_E (Introversion vs Extraversion percentage) influence
+    const isIntro = ["Ni", "Si", "Fi", "Ti"].includes(func);
+    const ieWeight = isIntro ? (I_E / 100) : ((100 - I_E) / 100);
+
+    // S_N (Sensing vs Intuition percentage) influence (S_N is Sensing %)
+    const isSens = ["Si", "Se"].includes(func);
+    const snWeight = isSens ? (S_N / 100) : ((100 - S_N) / 100);
+
+    // T_F (Thinking vs Feeling percentage) influence (T_F is Thinking %)
+    const isThink = ["Ti", "Te"].includes(func);
+    const tfWeight = isThink ? (T_F / 100) : ((100 - T_F) / 100);
+
+    // J_P (Judging vs Perceiving percentage) influence (J_P is Judging %)
+    const alignsJ = ["Te", "Fe", "Ni", "Si"].includes(func);
+    const jpWeight = alignsJ ? (J_P / 100) : ((100 - J_P) / 100);
+
+    // Blend: Base direct score is 60%, Axis alignment is 40% (producing deep integration)
+    const axisScore = (ieWeight * 35) + (snWeight * 35) + (tfWeight * 20) + (jpWeight * 10);
+    const finalScore = (baseScore * 0.60) + (axisScore * 0.40);
+
+    adjustedCognitive[func] = Math.max(0, Math.min(100, Math.round(finalScore)));
+  });
+
+  const cognitiveRanking = Object.keys(adjustedCognitive).map(func => ({
     name: func,
-    score: normalize("cognitive", func, undefined, 50)
+    score: adjustedCognitive[func]
   })).sort((a, b) => b.score - a.score);
 
-  // B. Enneagram wing and elements
+  // C. Enneagram wing and elements
   const enneagramNorm: Record<string, number> = {};
   for (let i = 1; i <= 9; i++) {
     const key = String(i);
@@ -301,30 +352,6 @@ export function calculateResults(answers: Record<string, string>): FinalQuizResu
 
   const tritypeElements = [heartTriad[0], headTriad[0], gutTriad[0]].sort((a, b) => b.s - a.s);
   const tritype = tritypeElements.map(el => el.t).join("");
-
-  // C. MBTI axis percentages (I_E, S_N, T_F, J_P)
-  const mbtiAxisNorm = {
-    I: normalize("mbtiAxis", "I", undefined, 50),
-    E: normalize("mbtiAxis", "E", undefined, 50),
-    S: normalize("mbtiAxis", "S", undefined, 50),
-    N: normalize("mbtiAxis", "N", undefined, 50),
-    T: normalize("mbtiAxis", "T", undefined, 50),
-    F: normalize("mbtiAxis", "F", undefined, 50),
-    J: normalize("mbtiAxis", "J", undefined, 50),
-    P: normalize("mbtiAxis", "P", undefined, 50),
-  };
-
-  // Convert axes to relative percentages e.g. Introvert vs Extrovert
-  const calcContrast = (val1: number, val2: number): number => {
-    const total = val1 + val2;
-    if (total === 0) return 50;
-    return Math.round((val1 / total) * 100);
-  };
-
-  const I_E = calcContrast(mbtiAxisNorm.I, mbtiAxisNorm.E);
-  const S_N = calcContrast(mbtiAxisNorm.S, mbtiAxisNorm.N);
-  const T_F = calcContrast(mbtiAxisNorm.T, mbtiAxisNorm.F);
-  const J_P = calcContrast(mbtiAxisNorm.J, mbtiAxisNorm.P);
 
   // Stack fit algorithm for all 16 MBTI types
   const cogniMap: Record<string, number> = {};

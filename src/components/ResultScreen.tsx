@@ -3,16 +3,27 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { 
   Compass, Award, Heart, ShieldAlert, Sparkles, SlidersHorizontal, 
-  Lightbulb, Undo2, Bug, BookOpen, UserCheck, Smile, HelpCircle, 
-  ChevronDown, ChevronUp, Layers, CheckCircle 
+  Undo2, Bug, BookOpen, Smile, ChevronRight, CheckCircle, Download,
+  Share2, X, AlertTriangle, Sparkle, Brain, Zap, HelpCircle, Layers
 } from "lucide-react";
 import { FinalQuizResult } from "../types";
 import { ConstellationCanvas } from "./ConstellationCanvas";
 import { auditScoring, AuditReport } from "../utils/auditScoring";
+import { drawStoryCanvas } from "../utils/drawStoryCanvas";
+import {
+  TypologyDetail,
+  MORAL_DESCRIPTIONS,
+  DECISION_DESCRIPTIONS,
+  CONFLICT_DESCRIPTIONS,
+  COMMUNICATION_DESCRIPTIONS,
+  RELATIONSHIP_DESCRIPTIONS,
+  STRESS_DESCRIPTIONS,
+  DEFENSE_DESCRIPTIONS
+} from "../data/typologyDescriptions";
 
 interface ResultProps {
   results: FinalQuizResult;
@@ -23,6 +34,15 @@ export function ResultScreen({ results, onRestart }: ResultProps) {
   const [showDevAudit, setShowDevAudit] = useState(false);
   const [activeTab, setActiveTab] = useState<"cahaya" | "perilaku" | "ekosistem">("cahaya");
   const [auditReport] = useState<AuditReport>(() => auditScoring());
+  
+  // Interactive Explanation States
+  const [selectedTypology, setSelectedTypology] = useState<TypologyDetail | null>(null);
+  
+  // Share IG Story States
+  const [showShareModal, setShowShareModal] = useState(false);
+  const [storyImageSrc, setStoryImageSrc] = useState<string>("");
+  const [isGeneratingStory, setIsGeneratingStory] = useState(false);
+  const storyCanvasRef = useRef<HTMLCanvasElement>(null);
 
   // Helper translations for Enneagram explanations based on primary type
   const getEnneagramPoem = (type: string) => {
@@ -65,6 +85,47 @@ export function ResultScreen({ results, onRestart }: ResultProps) {
     comfort: results.preferredEnvironment
   };
 
+  // Generate Instagram Story Image
+  const generateIGStory = async () => {
+    setIsGeneratingStory(true);
+    setShowShareModal(true);
+    // Give time to render the canvas element in the hidden virtual tree
+    setTimeout(async () => {
+      if (storyCanvasRef.current) {
+        try {
+          const imgData = await drawStoryCanvas(
+            storyCanvasRef.current,
+            results,
+            enneagramInfo.title
+          );
+          setStoryImageSrc(imgData);
+        } catch (err) {
+          console.error("Gagal menggambar Rasi Story: ", err);
+        } finally {
+          setIsGeneratingStory(false);
+        }
+      }
+    }, 400);
+  };
+
+  const triggerTypologyDetail = (styleString: string, typeSource: Record<string, TypologyDetail>) => {
+    const detail = typeSource[styleString];
+    if (detail) {
+      setSelectedTypology(detail);
+    } else {
+      // Fallback fallback detail
+      setSelectedTypology({
+        title: styleString.split(" (")[0],
+        badge: "Detail Rasi",
+        shortDesc: "Bagian penting dari kepribadian komprehensif Anda.",
+        detailedDesc: `Tipe perilaku kognitif ${styleString} merelasikan bagaimana psikologi internal Anda merespon pemicu pendedahan dunia luar.`,
+        strength: "Keselarasan aksi, adaptasi lingkungan yang solid.",
+        vulnerability: "Rentang fluktuasi kenyamanan dalam situasi krisis tinggi.",
+        advice: "Gunakan panduan bimbingan yang seimbang untuk melatih kesadaran emosional diri secara berkala."
+      });
+    }
+  };
+
   return (
     <div className="relative min-h-screen bg-slate-950 text-slate-100 flex flex-col justify-between overflow-x-hidden">
       
@@ -87,24 +148,31 @@ export function ResultScreen({ results, onRestart }: ResultProps) {
               Rasi {results.top3Mbti[0].type} ({results.enneagram.wing})
             </h1>
             <p className="text-sm text-slate-400 mt-1 select-none font-sans max-w-lg leading-relaxed">
-              Sebuah rajutan rasi kepribadian {results.top3Mbti[0].type} yang dipandu intuisi esensial {enneagramInfo.title}.
+              Sebuah rasi kognitif berlapis dari rasi {results.top3Mbti[0].type} yang dipandu oleh rasi jiwa {enneagramInfo.title}.
             </p>
           </div>
 
-          <div className="flex items-center gap-3">
+          <div className="flex items-center flex-wrap gap-2 sm:gap-3">
             <button
               onClick={onRestart}
-              className="flex items-center gap-1.5 px-4 py-2.5 text-xs font-mono font-bold tracking-wider text-slate-300 hover:text-white uppercase bg-slate-900 border border-slate-800 hover:border-slate-700/80 rounded-xl transition-all select-none cursor-pointer"
+              className="flex items-center gap-1.5 px-3.5 py-2.5 text-xs font-mono font-bold tracking-wider text-slate-300 hover:text-white uppercase bg-slate-900 border border-slate-800 hover:border-slate-700/80 rounded-xl transition-all cursor-pointer"
             >
               <Undo2 className="w-3.5 h-3.5" />
               Uji Ulang
             </button>
             <button
+              onClick={generateIGStory}
+              className="flex items-center gap-1.5 px-3.5 py-2.5 text-xs font-mono font-bold tracking-wider text-white uppercase bg-indigo-600 hover:bg-indigo-500 rounded-xl transition-all cursor-pointer shadow-lg shadow-indigo-500/10"
+            >
+              <Share2 className="w-3.5 h-3.5" />
+              Bagikan Rasi (IG Story)
+            </button>
+            <button
               onClick={() => setShowDevAudit(!showDevAudit)}
-              className="flex items-center gap-1.5 px-4 py-2.5 text-xs font-mono font-bold tracking-wider text-teal-300 hover:text-teal-200 uppercase bg-teal-950/25 border border-teal-500/20 rounded-xl transition-all select-none cursor-pointer"
+              className="flex items-center gap-1.5 px-3 py-2.5 text-xs font-mono font-bold tracking-wider text-teal-350 hover:text-teal-200 uppercase bg-teal-950/25 border border-teal-500/20 rounded-xl transition-all cursor-pointer"
             >
               <Bug className="w-3.5 h-3.5" />
-              Audit Sistem
+              Audit
             </button>
           </div>
         </div>
@@ -167,7 +235,7 @@ export function ResultScreen({ results, onRestart }: ResultProps) {
                       </div>
                     )}
                     {auditReport.uiLeaks.length > 0 ? (
-                      <div className="text-amber-400 text-[10px]">UI Leaks Deteksi ({auditReport.uiLeaks.length}). Ada bocoran di: {auditReport.uiLeaks.slice(0, 3).map(l => l.id).join(", ")}</div>
+                      <div className="text-amber-400 text-[10px]">UI Leaks Deteksi ({auditReport.uiLeaks.length})</div>
                     ) : (
                       <div className="text-emerald-400 text-[10px] flex items-center gap-1">
                         <CheckCircle className="w-3.5 h-3.5" /> Bersih dari bocoran teori di UI
@@ -206,11 +274,11 @@ export function ResultScreen({ results, onRestart }: ResultProps) {
         </AnimatePresence>
 
         {/* BENTO VIEW TABS SELECTOR */}
-        <div className="flex gap-2 p-1 bg-slate-900/60 border border-slate-800 rounded-2xl w-full max-w-md mx-auto justify-between select-none">
+        <div className="flex gap-2 p-1 bg-slate-910/60 border border-slate-800 rounded-2xl w-full max-w-md mx-auto justify-between select-none">
           {[
             { id: "cahaya", label: "Cahaya Utama", icon: Sparkles },
-            { id: "perilaku", label: "Gaya Perilaku", icon: SlidersHorizontal },
-            { id: "ekosistem", label: "Ekosistem Afeksi", icon: BookOpen }
+            { id: "perilaku", label: "Kutub Kognitif", icon: SlidersHorizontal },
+            { id: "ekosistem", label: "Kompas Perilaku", icon: BookOpen }
           ].map(tab => {
             const Icon = tab.icon;
             const isAct = activeTab === tab.id;
@@ -231,6 +299,12 @@ export function ResultScreen({ results, onRestart }: ResultProps) {
           })}
         </div>
 
+        {/* CLICKABLE INFO BOX TIP TO HELP USER EXPAND DETAILS */}
+        <div className="max-w-xl mx-auto -mb-1 flex items-center justify-center gap-2 bg-indigo-950/20 border border-indigo-500/10 rounded-full px-4 py-1.5 text-center text-[10px] sm:text-xs text-indigo-300">
+          <Sparkle className="w-3.5 h-3.5 animate-spin" style={{ animationDuration: '4s' }} />
+          <span>Klik tanda panah atau nama tipologi untuk mendedah analisis lengkap & saran batin.</span>
+        </div>
+
         {/* VIEW SHIFT CHANNELS */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-left">
           
@@ -238,68 +312,71 @@ export function ResultScreen({ results, onRestart }: ResultProps) {
           {activeTab === "cahaya" && (
             <>
               {/* CONSTELATION CANVAS bento card */}
-              <div className="relative md:col-span-2 aspect-square md:aspect-auto md:h-[500px] border border-slate-800/80 rounded-3xl overflow-hidden flex flex-col justify-end p-6 bg-slate-950/40">
+              <div className="relative md:col-span-2 aspect-square md:aspect-auto md:h-[520px] border border-slate-900/80 rounded-3xl overflow-hidden flex flex-col justify-end p-6 bg-slate-950/45 shadow-2xl">
                 <ConstellationCanvas interactive={true} results={constellationSummaryInfo} />
               </div>
 
               {/* COGNITIVE STACK DETAILS */}
-              <div className="backdrop-blur-md bg-slate-900/15 border border-slate-800/80 rounded-3xl p-6 flex flex-col gap-4">
-                <div className="flex items-center gap-2 pb-3 border-b border-slate-800">
-                  <Layers className="w-5 h-5 text-indigo-400" />
-                  <h3 className="font-display font-semibold text-white tracking-wide">Arsitektur Cognitive Stack</h3>
-                </div>
-                
-                <p className="text-[10px] font-mono text-slate-400 leading-normal">
-                  Peta urutan pengolahan data Anda dari ranah kesadaran utama hingga pertahanan terdalam:
-                </p>
-
-                <div className="space-y-3 pt-2 text-xs">
-                  <div className="flex justify-between items-center p-2 rounded-xl bg-indigo-950/30 border border-indigo-500/15">
-                    <div>
-                      <p className="font-mono text-[9px] uppercase tracking-wider text-indigo-300 font-bold">Dominant (Hulu Utama)</p>
-                      <p className="font-display font-bold text-white mt-0.5">{results.mbtiStack.dominant}</p>
-                    </div>
-                    <span className="text-[10px] font-mono bg-indigo-500/20 text-indigo-300 px-1.5 py-0.5 rounded-md font-bold">1st</span>
+              <div className="backdrop-blur-md bg-slate-900/15 border border-slate-800/80 rounded-3xl p-6 flex flex-col gap-4 justify-between">
+                <div className="space-y-4">
+                  <div className="flex items-center gap-2 pb-3 border-b border-slate-800">
+                    <Layers className="w-5 h-5 text-indigo-400" />
+                    <h3 className="font-display font-semibold text-white tracking-wide">Arsitektur Cognitive Stack</h3>
                   </div>
+                  
+                  <p className="text-[10px] font-mono text-slate-400 leading-normal">
+                    Peta urutan pengolahan data kognitif dari kesadaran primer hingga rasi terdalam batin:
+                  </p>
 
-                  <div className="flex justify-between items-center p-2 rounded-xl bg-indigo-950/20 border border-indigo-500/10">
-                    <div>
-                      <p className="font-mono text-[9px] uppercase tracking-wider text-slate-400">Auxiliary (Pengarah Aksi)</p>
-                      <p className="font-display font-bold text-slate-200 mt-0.5">{results.mbtiStack.auxiliary}</p>
+                  <div className="space-y-2.5 pt-1 text-xs">
+                    <div className="flex justify-between items-center p-2 rounded-xl bg-indigo-950/20 border border-indigo-500/15">
+                      <div>
+                        <p className="font-mono text-[9px] uppercase tracking-wider text-indigo-300 font-bold">Dominant (Hulu Utama)</p>
+                        <p className="font-display font-bold text-white mt-0.5">{results.mbtiStack.dominant}</p>
+                      </div>
+                      <span className="text-[10px] font-mono bg-indigo-500/20 text-indigo-300 px-1.5 py-0.5 rounded-md font-bold">1st</span>
                     </div>
-                    <span className="text-[10px] font-mono bg-slate-800 text-slate-400 px-1.5 py-0.5 rounded-md">2nd</span>
-                  </div>
 
-                  <div className="flex justify-between items-center p-2 rounded-xl bg-slate-950/40 border border-slate-850">
-                    <div>
-                      <p className="font-mono text-[9px] uppercase tracking-wider text-slate-400">Tertiary (Sisi Kreatif/Labil)</p>
-                      <p className="font-display font-bold text-slate-300 mt-0.5">{results.mbtiStack.tertiary}</p>
+                    <div className="flex justify-between items-center p-2 rounded-xl bg-indigo-950/10 border border-indigo-500/5">
+                      <div>
+                        <p className="font-mono text-[9px] uppercase tracking-wider text-slate-400">Auxiliary (Pendukung Aksi)</p>
+                        <p className="font-display font-bold text-slate-200 mt-0.5">{results.mbtiStack.auxiliary}</p>
+                      </div>
+                      <span className="text-[10px] font-mono bg-slate-800 text-slate-400 px-1.5 py-0.5 rounded-md">2nd</span>
                     </div>
-                    <span className="text-[10px] font-mono bg-slate-800 text-slate-400 px-1.5 py-0.5 rounded-md">3rd</span>
-                  </div>
 
-                  <div className="flex justify-between items-center p-2 rounded-xl bg-slate-950/40 border border-slate-850">
-                    <div>
-                      <p className="font-mono text-[9px] uppercase tracking-wider text-rose-400/80">Inferior (Titik Lemah)</p>
-                      <p className="font-display font-bold text-rose-300/80 mt-0.5">{results.mbtiStack.inferior}</p>
+                    <div className="flex justify-between items-center p-2 rounded-xl bg-slate-950/40 border border-slate-850">
+                      <div>
+                        <p className="font-mono text-[9px] uppercase tracking-wider text-slate-400">Tertiary (Sisi Kreatif/Labil)</p>
+                        <p className="font-display font-bold text-slate-300 mt-0.5">{results.mbtiStack.tertiary}</p>
+                      </div>
+                      <span className="text-[10px] font-mono bg-slate-800 text-slate-400 px-1.5 py-0.5 rounded-md">3rd</span>
                     </div>
-                    <span className="text-[10px] font-mono bg-rose-950/20 text-rose-400 px-1.5 py-0.5 rounded-md">4th</span>
+
+                    <div className="flex justify-between items-center p-2 rounded-xl bg-slate-950/40 border border-slate-850">
+                      <div>
+                        <p className="font-mono text-[9px] uppercase tracking-wider text-rose-450/80">Inferior (Titik Rentan)</p>
+                        <p className="font-display font-bold text-rose-300/80 mt-0.5">{results.mbtiStack.inferior}</p>
+                      </div>
+                      <span className="text-[10px] font-mono bg-rose-950/20 text-rose-400 px-1.5 py-0.5 rounded-md">4th</span>
+                    </div>
                   </div>
                 </div>
 
                 {/* Shadows roles link */}
                 <div className="mt-2 p-3 bg-rose-950/10 border border-rose-500/10 rounded-2xl text-[10px] leading-relaxed text-slate-400">
-                  <span className="font-bold text-rose-400 uppercase">Pertahanan Shadow (Bawah Sadar):</span>
-                  <p className="mt-1">
-                    Saat Anda terpojok stress, asimilasi kognitif akan memicu <span className="text-slate-300 font-semibold">{results.mbtiStack.opposing}</span> sebagai tameng asertif, 
-                    diikuti suara destruktif <span className="text-slate-300 font-semibold">{results.mbtiStack.critical}</span> untuk menghakimi diri sepi.
+                  <span className="font-bold text-rose-400 uppercase font-mono text-[9px] tracking-wide block mb-1">Rasi Arsitektur Bayangan (Shadow):</span>
+                  <p>
+                    Saat Anda dipojokkan krisis, rasi bayangan menghadirkan <span className="text-slate-300 font-semibold">{results.mbtiStack.opposing}</span> sebagai tameng otonom, 
+                    diikuti suara kejam <span className="text-slate-300 font-semibold">{results.mbtiStack.critical}</span>, trik perangkap <span className="text-slate-300 font-semibold">{results.mbtiStack.trickster}</span>, 
+                    hingga bahaya pembersihan hubungan dari <span className="text-slate-300 font-semibold">{results.mbtiStack.demon}</span>.
                   </p>
                 </div>
               </div>
             </>
           )}
 
-          {/* TAB 2: GAYA PERILAKU */}
+          {/* TAB 2: SPEKTRUM KUTUB KOGNITIF */}
           {activeTab === "perilaku" && (
             <>
               {/* MBTI AXIS DICHOTOMY CONTRAST PANEL */}
@@ -309,7 +386,7 @@ export function ResultScreen({ results, onRestart }: ResultProps) {
                   <h3 className="font-display font-semibold text-white tracking-wide">Spektrum Kutub Kognitif</h3>
                 </div>
 
-                <div className="space-y-5 py-4">
+                <div className="space-y-5 py-2">
                   {/* I vs E */}
                   <div className="space-y-1 text-xs">
                     <div className="flex justify-between font-mono text-[10px] uppercase text-indigo-300">
@@ -321,7 +398,7 @@ export function ResultScreen({ results, onRestart }: ResultProps) {
                       <div className="h-full bg-slate-800" style={{ width: `${100 - results.mbtiDichotomy.I_E}%` }} />
                     </div>
                     <p className="text-[10px] text-slate-400 select-none pt-0.5 leading-normal">
-                      Cenderung mengarah ke: <span className="text-indigo-200 font-semibold">{getDichotomyLabelValue("IE", results.mbtiDichotomy.I_E)}</span>.
+                      Kutub rasi mengarah ke: <span className="text-indigo-200 font-semibold">{getDichotomyLabelValue("IE", results.mbtiDichotomy.I_E)}</span>.
                     </p>
                   </div>
 
@@ -336,7 +413,7 @@ export function ResultScreen({ results, onRestart }: ResultProps) {
                       <div className="h-full bg-slate-800" style={{ width: `${100 - results.mbtiDichotomy.S_N}%` }} />
                     </div>
                     <p className="text-[10px] text-slate-400 select-none pt-0.5 leading-normal">
-                      Cenderung mengarah ke: <span className="text-emerald-200 font-semibold">{getDichotomyLabelValue("SN", results.mbtiDichotomy.S_N)}</span>.
+                      Kutub rasi mengarah ke: <span className="text-emerald-200 font-semibold">{getDichotomyLabelValue("SN", results.mbtiDichotomy.S_N)}</span>.
                     </p>
                   </div>
 
@@ -351,7 +428,7 @@ export function ResultScreen({ results, onRestart }: ResultProps) {
                       <div className="h-full bg-slate-800" style={{ width: `${100 - results.mbtiDichotomy.T_F}%` }} />
                     </div>
                     <p className="text-[10px] text-slate-400 select-none pt-0.5 leading-normal">
-                      Cenderung mengarah ke: <span className="text-amber-200 font-semibold">{getDichotomyLabelValue("TF", results.mbtiDichotomy.T_F)}</span>.
+                      Kutub rasi mengarah ke: <span className="text-amber-200 font-semibold">{getDichotomyLabelValue("TF", results.mbtiDichotomy.T_F)}</span>.
                     </p>
                   </div>
 
@@ -366,15 +443,15 @@ export function ResultScreen({ results, onRestart }: ResultProps) {
                       <div className="h-full bg-slate-800" style={{ width: `${100 - results.mbtiDichotomy.J_P}%` }} />
                     </div>
                     <p className="text-[10px] text-slate-400 select-none pt-0.5 leading-normal">
-                      Cenderung mengarah ke: <span className="text-rose-200 font-semibold">{getDichotomyLabelValue("JP", results.mbtiDichotomy.J_P)}</span>.
+                      Kutub rasi mengarah ke: <span className="text-rose-200 font-semibold">{getDichotomyLabelValue("JP", results.mbtiDichotomy.J_P)}</span>.
                     </p>
                   </div>
                 </div>
 
                 {/* Additional metrics info */}
                 <div className="grid grid-cols-2 gap-4 pt-3 border-t border-slate-800 text-[10px] font-mono text-slate-400">
-                  <div>Socionics Estimate: <span className="text-indigo-300 font-bold">{results.socionicsEstimate}</span></div>
-                  <div>Quadra Group: <span className="text-indigo-300 font-bold">{results.quadraTendency} Quadra</span></div>
+                  <div>Model Socionics: <span className="text-indigo-300 font-bold">{results.socionicsEstimate}</span></div>
+                  <div>Grup Quadra: <span className="text-emerald-300 font-bold">{results.quadraTendency}</span></div>
                 </div>
               </div>
 
@@ -382,11 +459,11 @@ export function ResultScreen({ results, onRestart }: ResultProps) {
               <div className="backdrop-blur-md bg-slate-900/15 border border-slate-800/80 rounded-3xl p-6 flex flex-col gap-4">
                 <div className="flex items-center gap-2 pb-3 border-b border-slate-800">
                   <Award className="w-5 h-5 text-rose-400" />
-                  <h3 className="font-display font-semibold text-white tracking-wide">Sinar Enneagram & Tritype</h3>
+                  <h3 className="font-display font-semibold text-white tracking-wide">Jiwa Enneagram & Tritype</h3>
                 </div>
 
                 <div className="text-center bg-slate-950/40 p-5 rounded-2xl border border-rose-500/10">
-                  <span className="text-[10px] font-mono tracking-widest text-slate-400 uppercase">Tipe Utama</span>
+                  <span className="text-[10px] font-mono tracking-widest text-slate-400 uppercase">Arah Rasi Utama</span>
                   <p className="text-4xl font-display font-bold text-rose-300 mt-1">{results.enneagram.wing}</p>
                   <p className="text-xs font-display font-semibold text-white tracking-wider mt-2 uppercase">{enneagramInfo.title}</p>
                 </div>
@@ -403,68 +480,125 @@ export function ResultScreen({ results, onRestart }: ResultProps) {
                   </div>
                 </div>
 
-                <p className="text-[10px] text-slate-400 leading-relaxed mt-2 p-3 bg-rose-950/10 border border-rose-500/5 rounded-2xl">
-                  💡 <span className="font-bold text-rose-400 font-display">Refleksi Ego:</span> {enneagramInfo.desc}
+                <p className="text-[10px] text-slate-400 leading-relaxed mt-1 p-3 bg-rose-950/10 border border-rose-500/5 rounded-2xl">
+                  💡 <span className="font-bold text-rose-400 font-display">Pantulan Jiwa:</span> {enneagramInfo.desc}
                 </p>
               </div>
             </>
           )}
 
-          {/* TAB 3: EKOSISTEM AFEKSI & NURTURE */}
+          {/* TAB 3: KOMPAS PERILAKU & EKOSISTEM */}
           {activeTab === "ekosistem" && (
             <>
-              {/* INTERPERSONAL & VALUE SATELLITES */}
-              <div className="backdrop-blur-md bg-slate-900/15 border border-slate-800/80 rounded-3xl p-6 flex flex-col gap-4 md:col-span-2">
+              {/* PRIMARY INTERPERSONAL COMPASS - DARI AUDIT MEMBUAT MEREKA BISA KLIKS */}
+              <div className="backdrop-blur-md bg-slate-900/15 border border-slate-800/80 rounded-3xl p-6 flex flex-col gap-4 md:col-span-2 shadow-2xl">
                 <div className="flex items-center gap-2 pb-3 border-b border-slate-800">
                   <Heart className="w-5 h-5 text-emerald-400" />
-                  <h3 className="font-display font-semibold text-white tracking-wide">Pilar Siklus & Kepribadian Batin</h3>
+                  <h3 className="font-display font-semibold text-white tracking-wide">Peta Kompas Perilaku & Interpersonal</h3>
                 </div>
 
+                {/* GRID OF CLICKABLE TYPOLOGY CARD ITEMS */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
                   
-                  {/* Values Satellite beads */}
-                  <div className="backdrop-blur-md bg-slate-950/30 border border-slate-850 p-4 rounded-2xl">
-                    <h4 className="font-display font-semibold text-xs text-emerald-300 uppercase tracking-wider pb-2 border-b border-slate-900/65">
-                      Gugusan Nilai Tertinggi
-                    </h4>
-                    <ul className="space-y-2.5 mt-3">
-                      {results.valuesRanking.map((val, idx) => (
-                        <li key={val} className="flex items-center gap-2 leading-none text-slate-300">
-                          <span className="flex items-center justify-center w-5 h-5 rounded-md bg-emerald-950/40 border border-emerald-500/20 text-emerald-400 font-mono text-[10px] font-bold">
-                            {idx + 1}
-                          </span>
-                          <span className="text-xs truncate">{val}</span>
-                        </li>
-                      ))}
-                    </ul>
+                  {/* Attachment Leaning Card (Avoidant, Secure, Anxious etc) */}
+                  <div 
+                    onClick={() => triggerTypologyDetail(results.relationshipTendency, RELATIONSHIP_DESCRIPTIONS)}
+                    className="p-4 bg-slate-950/45 border border-slate-850 hover:border-indigo-500/35 rounded-2xl cursor-pointer transition-all hover:bg-slate-900/40 group flex flex-col justify-between gap-3 focus:outline-none"
+                  >
+                    <div>
+                      <div className="flex justify-between items-center">
+                        <span className="text-[9px] font-mono text-indigo-400 uppercase tracking-widest font-bold">Gaya Hubungan (Attachment)</span>
+                        <ChevronRight className="w-3.5 h-3.5 text-slate-600 group-hover:text-indigo-400 group-hover:translate-x-0.5 transition-all" />
+                      </div>
+                      <p className="text-sm font-semibold text-white mt-2 font-display">{results.relationshipTendency.split(" (")[0]}</p>
+                      <p className="text-[10px] text-slate-400 mt-1.5 leading-relaxed line-clamp-2">
+                        {RELATIONSHIP_DESCRIPTIONS[results.relationshipTendency]?.shortDesc || "Mengukur cara Anda menjalin kedekatan emosional dan batas privat."}
+                      </p>
+                    </div>
                   </div>
 
-                  {/* Character style tags */}
-                  <div className="backdrop-blur-md bg-slate-950/30 border border-slate-850 p-4 rounded-2xl flex flex-col gap-3">
-                    <h4 className="font-display font-semibold text-xs text-indigo-300 uppercase tracking-wider pb-2 border-b border-slate-900/65">
-                      Sifat & Reaksi Kunci
-                    </h4>
-                    
-                    <div className="space-y-2 mt-1 select-none leading-none">
-                      <div>
-                        <p className="text-[9px] font-mono text-slate-500 uppercase">Gaya Memutuskan</p>
-                        <p className="text-[11px] font-sans font-semibold text-white mt-1">{results.decisionStyle}</p>
+                  {/* Stress Response Card */}
+                  <div 
+                    onClick={() => triggerTypologyDetail(results.stressResponse, STRESS_DESCRIPTIONS)}
+                    className="p-4 bg-slate-950/45 border border-slate-850 hover:border-indigo-500/35 rounded-2xl cursor-pointer transition-all hover:bg-slate-900/40 group flex flex-col justify-between gap-3 focus:outline-none"
+                  >
+                    <div>
+                      <div className="flex justify-between items-center">
+                        <span className="text-[9px] font-mono text-indigo-400 uppercase tracking-widest font-bold">Respon Stres (Saraf)</span>
+                        <ChevronRight className="w-3.5 h-3.5 text-slate-600 group-hover:text-indigo-400 group-hover:translate-x-0.5 transition-all" />
                       </div>
+                      <p className="text-sm font-semibold text-rose-350 mt-2 font-display">{results.stressResponse.split(" (")[0]}</p>
+                      <p className="text-[10px] text-slate-400 mt-1.5 leading-relaxed line-clamp-2">
+                        {STRESS_DESCRIPTIONS[results.stressResponse]?.shortDesc || "Mengukur aksi saraf otonom saat ditekan krisis."}
+                      </p>
+                    </div>
+                  </div>
 
-                      <div>
-                        <p className="text-[9px] font-mono text-slate-500 uppercase">Gaya Berkomunikasi</p>
-                        <p className="text-[11px] font-sans font-semibold text-white mt-1">{results.communicationStyle}</p>
+                  {/* Conflict Style Card */}
+                  <div 
+                    onClick={() => triggerTypologyDetail(results.conflictStyle, CONFLICT_DESCRIPTIONS)}
+                    className="p-4 bg-slate-950/45 border border-slate-850 hover:border-indigo-500/35 rounded-2xl cursor-pointer transition-all hover:bg-slate-900/40 group flex flex-col justify-between gap-3 focus:outline-none"
+                  >
+                    <div>
+                      <div className="flex justify-between items-center">
+                        <span className="text-[9px] font-mono text-indigo-400 uppercase tracking-widest font-bold">Model Konflik (Sengketa)</span>
+                        <ChevronRight className="w-3.5 h-3.5 text-slate-600 group-hover:text-indigo-400 group-hover:translate-x-0.5 transition-all" />
                       </div>
+                      <p className="text-sm font-semibold text-white mt-2 font-display">{results.conflictStyle.split(" (")[0]}</p>
+                      <p className="text-[10px] text-slate-400 mt-1.5 leading-relaxed line-clamp-2">
+                        {CONFLICT_DESCRIPTIONS[results.conflictStyle]?.shortDesc || "Bagaimana Anda mempertahankan ego atau berkompromi dalam perselisihan."}
+                      </p>
+                    </div>
+                  </div>
 
-                      <div>
-                        <p className="text-[9px] font-mono text-slate-500 uppercase">Respon Berkonflik</p>
-                        <p className="text-[11px] font-sans font-semibold text-white mt-1">{results.conflictStyle}</p>
+                  {/* Defense Pattern Card */}
+                  <div 
+                    onClick={() => triggerTypologyDetail(results.defensePattern, DEFENSE_DESCRIPTIONS)}
+                    className="p-4 bg-slate-950/45 border border-slate-850 hover:border-indigo-500/35 rounded-2xl cursor-pointer transition-all hover:bg-slate-900/40 group flex flex-col justify-between gap-3 focus:outline-none"
+                  >
+                    <div>
+                      <div className="flex justify-between items-center">
+                        <span className="text-[9px] font-mono text-indigo-400 uppercase tracking-widest font-bold">Pilar Pertahanan (Defense)</span>
+                        <ChevronRight className="w-3.5 h-3.5 text-slate-600 group-hover:text-indigo-400 group-hover:translate-x-0.5 transition-all" />
                       </div>
+                      <p className="text-sm font-semibold text-white mt-2 font-display">{results.defensePattern.split(" (")[0]}</p>
+                      <p className="text-[10px] text-slate-400 mt-1.5 leading-relaxed line-clamp-2">
+                        {DEFENSE_DESCRIPTIONS[results.defensePattern]?.shortDesc || "Saringan penenang batin psikologis dari luka hantaman luar."}
+                      </p>
+                    </div>
+                  </div>
 
-                      <div>
-                        <p className="text-[9px] font-mono text-slate-500 uppercase">Reaksi Saat Depresi</p>
-                        <p className="text-[11px] font-sans font-semibold text-rose-300 mt-1">{results.stressResponse}</p>
+                  {/* Decision Style Card */}
+                  <div 
+                    onClick={() => triggerTypologyDetail(results.decisionStyle, DECISION_DESCRIPTIONS)}
+                    className="p-4 bg-slate-950/45 border border-slate-850 hover:border-indigo-500/35 rounded-2xl cursor-pointer transition-all hover:bg-slate-900/40 group flex flex-col justify-between gap-3 focus:outline-none"
+                  >
+                    <div>
+                      <div className="flex justify-between items-center">
+                        <span className="text-[9px] font-mono text-indigo-400 uppercase tracking-widest font-bold">Gaya Memutuskan (Decision)</span>
+                        <ChevronRight className="w-3.5 h-3.5 text-slate-600 group-hover:text-indigo-400 group-hover:translate-x-0.5 transition-all" />
                       </div>
+                      <p className="text-sm font-semibold text-white mt-2 font-display">{results.decisionStyle.split(" (")[0]}</p>
+                      <p className="text-[10px] text-slate-400 mt-1.5 leading-relaxed line-clamp-2">
+                        {DECISION_DESCRIPTIONS[results.decisionStyle]?.shortDesc || "Formula taktis pemetaan opsi dan penentuan langkah."}
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Moral Style Card */}
+                  <div 
+                    onClick={() => triggerTypologyDetail(results.moralStyle, MORAL_DESCRIPTIONS)}
+                    className="p-4 bg-slate-950/45 border border-slate-850 hover:border-indigo-500/35 rounded-2xl cursor-pointer transition-all hover:bg-slate-900/40 group flex flex-col justify-between gap-3 focus:outline-none"
+                  >
+                    <div>
+                      <div className="flex justify-between items-center">
+                        <span className="text-[9px] font-mono text-indigo-400 uppercase tracking-widest font-bold">Filsafat Moral (Moral)</span>
+                        <ChevronRight className="w-3.5 h-3.5 text-slate-600 group-hover:text-indigo-400 group-hover:translate-x-0.5 transition-all" />
+                      </div>
+                      <p className="text-sm font-semibold text-white mt-2 font-display">{results.moralStyle.split(" (")[0]}</p>
+                      <p className="text-[10px] text-slate-400 mt-1.5 leading-relaxed line-clamp-2">
+                        {MORAL_DESCRIPTIONS[results.moralStyle]?.shortDesc || "Kompas nilai ketulusan dan integritas sosial."}
+                      </p>
                     </div>
                   </div>
 
@@ -472,38 +606,55 @@ export function ResultScreen({ results, onRestart }: ResultProps) {
 
                 {/* Love and Partner narration box */}
                 <div className="p-4 bg-emerald-950/10 border border-emerald-500/10 rounded-2xl text-[11px] leading-relaxed text-slate-300">
-                  <span className="font-bold text-emerald-400 font-display">Kamus Afeksi & Ruang Kedempingan:</span>
+                  <span className="font-bold text-emerald-400 font-display">Ruang Afeksi & Pemulihan Seimbang:</span>
                   <p className="mt-1">
-                    Anda merasakan kedalaman kehangatan yang tulus di atas fondasi afeksi berupa <span className="font-semibold text-white">{results.preferredLoveStyle}</span>, 
-                    dan paling harmonis ketika bersandar mendampingi partner dengan sifat <span className="font-semibold text-white">{results.idealPartnerTendency}</span>. 
-                    Hari-hari lelah Anda lekas pulih di dalam ruang perlindungan berkarakter <span className="font-semibold text-white">{results.preferredEnvironment}</span>.
+                    Anda paling subur memercikkan kebaikan saat menerima ekspresi kasih <span className="font-semibold text-white">{results.preferredLoveStyle}</span>, 
+                    paling selaras tumbuh mendampingi partner berjiwa <span className="font-semibold text-white">{results.idealPartnerTendency}</span>, 
+                    serta kembali melaraskan energi batin di dalam lingkungan <span className="font-semibold text-white">{results.preferredEnvironment}</span>.
                   </p>
                 </div>
               </div>
 
               {/* PROFESSIONAL WORK MODEL & LEARNING */}
-              <div className="backdrop-blur-md bg-slate-900/15 border border-slate-800/80 rounded-3xl p-6 flex flex-col gap-4">
-                <div className="flex items-center gap-2 pb-3 border-b border-slate-800">
-                  <Smile className="w-5 h-5 text-indigo-400" />
-                  <h3 className="font-display font-semibold text-white tracking-wide">Ekosistem Kinerja</h3>
+              <div className="backdrop-blur-md bg-slate-900/15 border border-slate-800/80 rounded-3xl p-6 flex flex-col gap-4 justify-between">
+                <div className="space-y-4">
+                  <div className="flex items-center gap-2 pb-3 border-b border-slate-800">
+                    <Smile className="w-5 h-5 text-indigo-400" />
+                    <h3 className="font-display font-semibold text-white tracking-wide">Ekosistem Kinerja</h3>
+                  </div>
+
+                  <div className="space-y-3.5">
+                    {/* Work Style Clickable Card */}
+                    <div className="backdrop-blur-md bg-slate-950/45 border border-slate-850 p-4 rounded-2xl">
+                      <p className="text-[9px] font-mono text-slate-450 uppercase">Gaya Kerja Terkuat</p>
+                      <p className="text-xs font-display font-bold text-white mt-1 leading-snug">{results.workStyle}</p>
+                    </div>
+
+                    {/* Learning Style Clickable Card */}
+                    <div className="backdrop-blur-md bg-slate-950/45 border border-slate-850 p-4 rounded-2xl">
+                      <p className="text-[9px] font-mono text-slate-450 uppercase">Gaya Belajar Efektif</p>
+                      <p className="text-xs font-display font-bold text-white mt-1 leading-snug">{results.learningStyle}</p>
+                    </div>
+
+                    {/* Temperament Clickable Card */}
+                    <div className="backdrop-blur-md bg-slate-950/45 border border-slate-850 p-4 rounded-2xl">
+                      <p className="text-[9px] font-mono text-slate-450 uppercase">Karakter Klasik Temperament</p>
+                      <p className="text-xs font-display font-bold text-indigo-300 mt-1 uppercase leading-snug">
+                        {results.temperament.primary} - {results.temperament.secondary} ({results.temperament.scorePrimary.toFixed(0)}%)
+                      </p>
+                    </div>
+                  </div>
                 </div>
 
-                <div className="space-y-4">
-                  <div className="backdrop-blur-md bg-slate-950/30 border border-slate-850 p-4 rounded-2xl">
-                    <p className="text-[9px] font-mono text-slate-400 uppercase">Gaya Kerja Terkuat</p>
-                    <p className="text-xs font-display font-bold text-white mt-1">{results.workStyle}</p>
-                  </div>
-
-                  <div className="backdrop-blur-md bg-slate-950/30 border border-slate-850 p-4 rounded-2xl">
-                    <p className="text-[9px] font-mono text-slate-400 uppercase">Gaya Belajar Efektif</p>
-                    <p className="text-xs font-display font-bold text-white mt-1">{results.learningStyle}</p>
-                  </div>
-
-                  <div className="backdrop-blur-md bg-slate-950/30 border border-slate-850 p-4 rounded-2xl">
-                    <p className="text-[9px] font-mono text-slate-405 uppercase">Karakter Klasik Temperament</p>
-                    <p className="text-xs font-display font-bold text-indigo-300 mt-1 uppercase">
-                      {results.temperament.primary} - {results.temperament.secondary} ({results.temperament.scorePrimary.toFixed(0)}%)
-                    </p>
+                {/* Values Satellites mini section */}
+                <div className="backdrop-blur-md bg-slate-950/20 border border-slate-850 p-3.5 rounded-2xl mt-2">
+                  <p className="text-[9px] font-mono text-emerald-400 uppercase tracking-wider font-bold mb-1.5 pb-1.5 border-b border-slate-900">Gugusan Nilai Teratas</p>
+                  <div className="flex flex-wrap gap-1.5">
+                    {results.valuesRanking.slice(0, 3).map((val, idx) => (
+                      <span key={val} className="text-[9px] font-sans font-semibold bg-slate-900 border border-slate-800 text-slate-300 px-2.5 py-1 rounded-full">
+                        {idx + 1}. {val}
+                      </span>
+                    ))}
                   </div>
                 </div>
               </div>
@@ -519,7 +670,7 @@ export function ResultScreen({ results, onRestart }: ResultProps) {
             <div>
               <p className="font-display font-bold text-white text-base">Tingkat Keandalan Sinyal (Confidence)</p>
               <div className="flex items-center gap-2 mt-1 select-none">
-                <span className="text-[10px] font-mono bg-indigo-950 text-indigo-300 px-2 py-0.5 rounded-md border border-indigo-500/10 uppercase font-bold">
+                <span className="text-[10px] font-mono bg-indigo-950 text-indigo-305 px-2 py-0.5 rounded-md border border-indigo-500/10 uppercase font-bold text-indigo-300">
                   {results.confidence.category}
                 </span>
                 <span className="text-slate-400 font-mono text-[10px]">Skor Validitas: {results.confidence.score}%</span>
@@ -533,14 +684,176 @@ export function ResultScreen({ results, onRestart }: ResultProps) {
           </div>
 
           <div className="flex flex-col items-center md:items-end gap-2 shrink-0 w-full md:w-auto">
-            <p className="text-[9px] font-mono text-slate-500 uppercase select-none tracking-wider font-bold">Rasi Diri Core Engine v2.4.0</p>
+            <p className="text-[9px] font-mono text-slate-500 uppercase select-none tracking-wider font-bold">Rasi Diri Core Engine v2.5.0</p>
             <p className="text-[10px] text-slate-400 text-center md:text-right font-sans leading-normal max-w-xs select-none">
-              Integritas data dijamin melalui andil audit parameter matematis secara lurus di browser lokal Anda.
+              Integritas data dijamin melalui andil analisis modular matematis secara lurus lokal tanpa sensor.
             </p>
           </div>
         </div>
 
       </div>
+
+      {/* TYPOLOGY EXPLANATORY OVERLAY MODAL */}
+      <AnimatePresence>
+        {selectedTypology && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 bg-slate-950/85 backdrop-blur-md flex items-center justify-center p-4"
+          >
+            {/* Modal Body Container */}
+            <motion.div
+              initial={{ scale: 0.95, y: 20 }}
+              animate={{ scale: 1, y: 0 }}
+              exit={{ scale: 0.95, y: 20 }}
+              className="max-w-2xl w-full backdrop-blur-xl bg-slate-900/90 border border-indigo-500/20 rounded-3xl p-6 sm:p-8 flex flex-col gap-5 shadow-2xl overflow-y-auto max-h-[90vh]"
+            >
+              <div className="flex justify-between items-start border-b border-slate-800 pb-4">
+                <div>
+                  <div className="flex items-center gap-2">
+                    <span className="text-[9px] font-mono font-bold tracking-widest text-indigo-400 bg-indigo-950/60 border border-indigo-500/10 px-2.5 py-1 rounded-full uppercase">
+                      {selectedTypology.badge}
+                    </span>
+                  </div>
+                  <h3 className="font-display font-bold text-2xl text-white tracking-wide mt-2">{selectedTypology.title}</h3>
+                </div>
+                <button 
+                  onClick={() => setSelectedTypology(null)}
+                  className="p-1.5 bg-slate-800 hover:bg-slate-750 text-slate-400 hover:text-white rounded-lg transition-all cursor-pointer focus:outline-none"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              </div>
+
+              {/* Descriptions block */}
+              <div className="space-y-4 text-xs sm:text-sm text-slate-300 leading-relaxed text-left">
+                <p className="font-semibold text-white text-sm sm:text-base">{selectedTypology.shortDesc}</p>
+                <p className="text-slate-400 leading-relaxed">{selectedTypology.detailedDesc}</p>
+
+                {/* Strength / Vulnerability 2 Column block */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-3">
+                  <div className="p-4 bg-emerald-950/10 border border-emerald-500/10 rounded-2xl">
+                    <span className="font-mono text-[10px] font-bold text-emerald-400 uppercase tracking-wider flex items-center gap-1.5 mb-1.5">
+                      <CheckCircle className="w-3.5 h-3.5" /> Kekuatan Utama
+                    </span>
+                    <p className="text-[11px] sm:text-xs text-slate-300 leading-relaxed">{selectedTypology.strength}</p>
+                  </div>
+
+                  <div className="p-4 bg-amber-950/10 border border-amber-500/10 rounded-2xl">
+                    <span className="font-mono text-[10px] font-bold text-amber-400 uppercase tracking-wider flex items-center gap-1.5 mb-1.5">
+                      <AlertTriangle className="w-3.5 h-3.5" /> Titik Kerentanan
+                    </span>
+                    <p className="text-[11px] sm:text-xs text-slate-300 leading-relaxed">{selectedTypology.vulnerability}</p>
+                  </div>
+                </div>
+
+                {/* Advice block with glowing lightbulb */}
+                <div className="p-4 bg-indigo-950/15 border border-indigo-500/10 rounded-2xl flex gap-3 items-start mt-1">
+                  <div className="w-8 h-8 rounded-full bg-indigo-950/50 flex items-center justify-center border border-indigo-500/10 text-indigo-400 shrink-0 mt-0.5">
+                    <Sparkle className="w-4 h-4 text-indigo-300" />
+                  </div>
+                  <div>
+                    <span className="font-display font-bold text-white text-xs sm:text-sm block">Saran Penyelarasan Batin</span>
+                    <p className="text-[11px] sm:text-xs text-slate-300 mt-1 leading-relaxed">{selectedTypology.advice}</p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Close Button footer bar */}
+              <button
+                onClick={() => setSelectedTypology(null)}
+                className="w-full mt-2 py-3 font-display font-semibold text-xs uppercase tracking-widest text-slate-300 hover:text-white bg-slate-800 hover:bg-slate-750 rounded-xl transition-all cursor-pointer focus:outline-none"
+              >
+                Tutup Analisis
+              </button>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* INSTAGRAM STORY EXPORTER DIALOG OVERLAY */}
+      <AnimatePresence>
+        {showShareModal && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 bg-slate-950/90 backdrop-blur-md flex items-center justify-center p-4"
+          >
+            <motion.div
+              initial={{ scale: 0.95, y: 20 }}
+              animate={{ scale: 1, y: 0 }}
+              exit={{ scale: 0.95, y: 20 }}
+              className="max-w-md w-full bg-slate-900 border border-slate-800 rounded-3xl p-6 text-center flex flex-col gap-4 shadow-2xl relative"
+            >
+              <button 
+                onClick={() => setShowShareModal(false)}
+                className="absolute top-4 right-4 p-1.5 bg-slate-800 text-slate-400 hover:text-white rounded-lg cursor-pointer focus:outline-none"
+              >
+                <X className="w-4 h-4" />
+              </button>
+
+              <div className="flex flex-col items-center gap-2">
+                <div className="w-10 h-10 bg-indigo-950/50 border border-indigo-500/20 text-indigo-400 rounded-full flex items-center justify-center">
+                  <Share2 className="w-4 h-4" />
+                </div>
+                <h3 className="font-display font-bold text-lg text-white">Bagikan Rasi ke IG Story</h3>
+                <p className="text-[11px] text-slate-400 max-w-xs mt-0.5 leading-relaxed">
+                  Gunakan panel kognitif resolusi tinggi yang kami rakit di bawah ini untuk menjadi latar belakang Instagram Story Anda.
+                </p>
+              </div>
+
+              {/* 9:16 Preview Card Box */}
+              <div className="relative aspect-[9/16] w-[210px] mx-auto border border-slate-800 rounded-2xl overflow-hidden shadow-lg bg-slate-950">
+                {isGeneratingStory ? (
+                  <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 bg-slate-950/80">
+                    <Brain className="w-8 h-8 text-indigo-400 animate-pulse" />
+                    <p className="text-[10px] font-mono text-slate-400">Merajut Rasi Keindahan...</p>
+                  </div>
+                ) : (
+                  storyImageSrc && (
+                    <img 
+                      src={storyImageSrc} 
+                      alt="Pratinjau IG Story" 
+                      className="w-full h-full object-cover select-none" 
+                      referrerPolicy="no-referrer"
+                    />
+                  )
+                )}
+              </div>
+
+              {/* Hidden Working Graphic Canvas */}
+              <canvas ref={storyCanvasRef} className="hidden" />
+
+              {/* CTA Action Buttons and Instructions */}
+              <div className="space-y-2 mt-2">
+                {!isGeneratingStory && storyImageSrc ? (
+                  <a
+                    href={storyImageSrc}
+                    download={`Rasi_Diri_${results.top3Mbti[0].type}_${results.enneagram.wing}_IG_Story.png`}
+                    className="w-full py-3 font-display font-bold text-xs uppercase tracking-widest text-center text-white bg-indigo-600 hover:bg-indigo-500 rounded-xl transition-all cursor-pointer shadow-lg shadow-indigo-500/10 flex items-center justify-center gap-2"
+                  >
+                    <Download className="w-4 h-4" />
+                    Unduh Gambar (PNG)
+                  </a>
+                ) : (
+                  <button
+                    disabled
+                    className="w-full py-3 font-display font-bold text-xs uppercase tracking-widest text-slate-500 bg-slate-800 rounded-xl flex items-center justify-center gap-2"
+                  >
+                    Menggambar...
+                  </button>
+                )}
+                <p className="text-[9px] font-mono text-slate-500 leading-normal">
+                  *Setelah mengunduh, unggah file PNG ini sebagai foto latar di Instagram Story Anda.
+                </p>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
     </div>
   );
 }
