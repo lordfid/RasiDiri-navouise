@@ -330,3 +330,184 @@ export const DEFENSE_DESCRIPTIONS: Record<string, TypologyDetail> = {
     advice: "Hadapi realitas pahit setapak demi setapak secara perlahan bersama teman terpercaya yang setulus hati menjaga Anda."
   }
 };
+
+export const LOVE_STYLE_DESCRIPTIONS: Record<string, TypologyDetail> = {
+  "qualityTime": {
+    title: "Waktu Berkualitas Intim (Quality Time)",
+    badge: "Atmosfer Kasih",
+    shortDesc: "Penyandingan jiwa di mana kehadiran utuh tanpa distraksi ponsel diletakkan sebagai bukti cinta terdalam.",
+    detailedDesc: "Bagi Anda, cinta sejati tidak diukur dari megahnya perhiasan atau riuhnya kata-kata rayuan manis, melainkan dari sisa perhatian yang hadir utuh. Duduk bersanding, saling menatap, berbagi rahasia batin, dengan gawai dimatikan adalah surga emosional Anda.",
+    strength: "Membangun jalinan kesetiaan kokoh berlandaskan keintiman batin yang murni.",
+    vulnerability: "Rentan merasa kesepian ekstrem atau diabaikan jika pasangan sibuk menyelesaikan tugas fungsional harian.",
+    advice: "Komunikasikan kebutuhan waktu intim Anda kepada pasangan secara dewasa, tanpa langsung menuding mereka acuh."
+  },
+  "wordsOfAffirmation": {
+    title: "Kata-Kata Pengakuan Autentik (Words of Affirmation)",
+    badge: "Atmosfer Kasih",
+    shortDesc: "Validasi verbal tulus sebagai penyubur energi batin untuk mengusir rasa cemas.",
+    detailedDesc: "Telinga batin Anda mendambakan afirmasi lisan yang autentik. Ungkapan sederhana seperti 'Aku bangga dengan daya juangmu' atau 'Kehadiranmu sangat meneduhkanku' bertindak laksana hujan musim semi yang menyembuhkan gersangnya kecemasan diri.",
+    strength: "Pemberi motivasi hebat yang sanggup melipatgandakan gairah aksi pasangan lewat apresiasi kata.",
+    vulnerability: "Sangat rapuh terhadap sindiran tajam, kritik kasar, atau bahasa dingin yang rentan terngiang berbulan-bulan.",
+    advice: "Hargai juga tindakan diam tanpa kata dari pasangan, karena tidak semua orang terbiasa merakit puisi kasih."
+  },
+  "physicalTouch": {
+    title: "Kedekatan Fisik Teduh (Physical Touch)",
+    badge: "Atmosfer Kasih",
+    shortDesc: "Pelukan hangat dan usapan jemari tenang sebagai penenang badai kecemasan biologis.",
+    detailedDesc: "Bahasa batin Anda berjalan lewat sentuhan sensoris kulit biologis. Genggaman erat tangan di tengah jalan riuh, usapan lembut kepala kala letih bekerja, hingga dekapan selimut hangat adalah penstabil sistem amigdala stres Anda secara instan.",
+    strength: "Membangun koneksi afeksi biologis purba yang menyehatkan regulasi saraf stres tubuh batin secara langsung.",
+    vulnerability: "Sangat sensitif pada jarak kontak fisik atau penolakan dekapan yang rentan diartikan sebagai hilangnya hasrat cinta.",
+    advice: "Latihlah juga kedekatan emosional verbal agar kehangatan jiwa tetap melingkar erat meski sedang berjarak fisik."
+  },
+  "actsOfService": {
+    title: "Bakti Tindakan Nyata (Acts of Service)",
+    badge: "Atmosfer Kasih",
+    shortDesc: "Pemudahan beban keseharian melalui dedikasi kerja praktis tanpa harus diminta.",
+    detailedDesc: "Anda mempercayai aksi nyata di atas janji mulut kosong: 'Tunjukkan tindakanmu, jangan hanya merangkai kalimat!' Membantu mencuci piring, menyeduhkan kopi hangat kala fajar menyingsing, atau membereskan dokumen adalah representasi cinta paling luhur bagi Anda.",
+    strength: "Keandalan tinggi sebagai pasangan hidup andalan yang meringankan sirkulasi operasional tangga kehidupan.",
+    vulnerability: "Rentan merasa dimanfaatkan sepihak sebagai asisten operasional dan memendam kelelahan amarah yang meledak.",
+    advice: "Utarakan kebutuhan bantuan Anda secara asertif, beri ruang pasangan belajar melayani tanpa harus dipaksa kaku."
+  },
+  "receivingGifts": {
+    title: "Hadiah Kejutan Berselera (Receiving Gifts)",
+    badge: "Atmosfer Kasih",
+    shortDesc: "Simbol visual perhatian detail yang mencerminkan pemikiran mendalam pemberi.",
+    detailedDesc: "Bagi Anda, hadiah bukanlah transaksi materi finansial, melainkan jembatan ingatan visual. Anda menyukai kenang-kenangan yang membuktikan: 'Aku mengingat kesukaan rahasiamu saat melihat benda unik ini di perjalanan jauh.'",
+    strength: "Kemampuan hebat melestarikan kenangan indah relasi melalui koleksi memorabilia visual penuh sejarah batin.",
+    vulnerability: "Rentan terluka jika perayaan tanggal bersejarah dilewatkan secara hambar tanpa bingkisan fisik kecil.",
+    advice: "Sadari bahwa ketatnya anggaran atau perbedaan kultur afeksi pasangan tidak mengurangi ketulusan kasih mereka."
+  },
+  "emotionalDepth": {
+    title: "Pendedahan Kedalaman Rahasia (Emotional Depth)",
+    badge: "Atmosfer Kasih",
+    shortDesc: "Penyatuan dua sanubari sunyi melalui pembongkaran rahasia gelap batiniah.",
+    detailedDesc: "Anda membenci percakapan basa-basi hambar dunia sosial. Ruang afeksi Anda baru menyala tatkala Anda dan pasangan berani merobek topeng keindahan sosial, mengurai duka, serta menangisi trauma masa lalu bersama dalam pelukan hening malam.",
+    strength: "Menciptakan keselarasan batin tingkat esprituil terdalam yang kebal dari goyangan konflik permukaan.",
+    vulnerability: "Menuntut intensitas emosional ekstrem terus-menerus yang rentan membuat pasangan merasa letih sesak napas.",
+    advice: "Berikan ruang tawa renyah, lelucon receh, dan kesederhanaan kasual agar relasi Anda bercahaya seimbang segar."
+  }
+};
+
+export const RIASEC_DESCRIPTIONS: Record<string, TypologyDetail> = {
+  "Realistic": {
+    title: "Realistic Style (Realistis - Konstruktor Fisik)",
+    badge: "Minat RIASEC",
+    shortDesc: "Cenderung menyukai aktivitas praktis berwujud, manipulasi gawai fisik, eksplorasi kriya, dan petualangan mengolah alam rimbun.",
+    detailedDesc: "Anda adalah pencipta yang menyatu dengan realitas materi riil. Alih-asli mengembara dalam perdebatan teori sosiologi abstrak atau basa-basi emosional yang tak berujung, Anda merasa paling fungsional saat menggunakan jemari, merakit mesin gawai, bertani di sela rindangnya pohon, atau menggoreskan karya kriya nyata komplit di tangan.",
+    strength: "Orientasi hasil praktis yang lugas, kemandirian fungsional tinggi, dan ketangkasan mengolah masalah teknik fisik.",
+    vulnerability: "Sulit bertukar rasa emosional yang sensitif dan rawan menolak argumentasi teoritis visioner yang abstrak.",
+    advice: "Latihlah kepekaan verbal Anda; hargai ide-ide spekulatif pemicu inovasi sebelum langsung mencapnya tidak realistis konyol."
+  },
+  "Investigative": {
+    title: "Investigative Style (Investigatif - Detektif Data)",
+    badge: "Minat RIASEC",
+    shortDesc: "Gemar memecahkan misteri keilmuan, riset analitis, membedah data kompleks, dan merakit arsitektur kebenaran logis.",
+    detailedDesc: "Dunia batin Anda dipenuhi oleh rasa ingin tahu yang membara terhadap rahasia di balik rasi formula kehidupan. Sebagai detektif data sejati, Anda mengerahkan daya logika untuk menyelidiki, mengumpulkan serpihan bukti sains, dan membedah korelasi sistematis tak terlihat.",
+    strength: "Akurasi pikiran objektif tepercaya, kedalaman kemampuan riset sains, dan pisau analisis tajam.",
+    vulnerability: "Terjebak penutupan diri dari dinamika sosial hangat (antisosial) dan lumpuh mengekseksusi tindakan nyata praktis.",
+    advice: "Berbagilah konklusi cerdas Anda kepada dunia luar; bangun kolaborasi hangat agar riset agung Anda mendarat menyembuhkan sesama."
+  },
+  "Artistic": {
+    title: "Artistic Style (Artistik - Muse Eksperimentalis)",
+    badge: "Minat RIASEC",
+    shortDesc: "Menolak kekakuan template normatif; berselancar dalam orisinalitas batiniah, estetika rasa, dan imajinasi bebas tak terikat.",
+    detailedDesc: "Anda adalah pembangkang kreatif yang lahir untuk melukiskan rasi keunikan batin ke kanvas ekspresi orisinal. Anda sesak napas di dalam organisasi kaku berbau militer atau pengulangan admin klerikal sepi. Setiap sela hidup adalah ruang estetik liar.",
+    strength: "Daya inovasi estetik luar biasa murni, keaslian karakter ekspresi diri, dan keberanian membongkar batas baku.",
+    vulnerability: "Inkonsistensi kedisiplinan operasional dan fluktuasi kenyamanan emosi yang rentan merusak kestabilan karir harian.",
+    advice: "Tegakkan jangkar struktur harian kecil secara mandiri agar petualangan estetika besar Anda terwadahi rapi fungsional."
+  },
+  "Social": {
+    title: "Social Style (Sosial - Pengasuh Sanubari)",
+    badge: "Minat RIASEC",
+    shortDesc: "Terpanggil untuk mengajar, membimbing spiritualitas, memediasi perselisihan, merawat duka emosional sesama hidup secara tulus.",
+    detailedDesc: "Magnet batin Anda selalu mengarah pada pertumbuhan jiwa manusia. Anda memandang pekerjaan bukan sekedar pemburu rezeki, melainkan ibadah pelayanan sosial. Ruang paling damai Anda adalah saat duduk tenang mendengarkan kepedihan orang lain seutuhnya.",
+    strength: "Empati tiada tanding, resonansi kehangatan relasi, dan kemampuan mediasi perdamaian sosial tingkat tinggi.",
+    vulnerability: "Sangat mudah mengasimilasi kepedihan orang (compassion fatigue) hingga lupa memproteksi batas kenyamanan batin privat.",
+    advice: "Tegakkan dinding privasi perlindungan batin; Anda tidak bisa memberi kehangatan jika lilin hidup Anda sendiri padam terlewat."
+  },
+  "Enterprising": {
+    title: "Enterprising Style (Persuasif - Penggerak Karismatik)",
+    badge: "Minat RIASEC",
+    shortDesc: "Menyukai panggung kepemimpinan, persuasi massa karismatik, pengambilan resiko bisnis, dan penaklukan target kinerja strategis.",
+    detailedDesc: "Anda terlahir dengan api ambisi menyala di dada. Anda tidak mau diam pasif sekedar ditiup takdir sebagai pengikut kaku. Anda gemar mengambil kendali kemudi, berbicara persuasif menggerakkan massa, merancang bisnis taktis, dan meluncurkan ekspansi besar berkelanjutan.",
+    strength: "Karisma pengaruh magnetis tinggi, ketahanan tinggi dalam persaingan pasar strategis, penyala gairah kerja tim.",
+    vulnerability: "Rentan bersikap manipulatif demi target serta berisiko menderita kelelahan parah akibat obsesi kejayaan reputasi.",
+    advice: "Dengarkan suara batin anggota tim terkecil secara setulus hati; kejayaan abadi bertumpu pada pondasi ketulusan adab cinta."
+  },
+  "Conventional": {
+    title: "Conventional Style (Konvensional - Penjaga Aksara)",
+    badge: "Minat RIASEC",
+    shortDesc: "Merawat pilar ketertiban sistem melalui pengarsipan data rapi, akurasi administrasi, dan kepatuhan silsilah panduan operasional.",
+    detailedDesc: "Bagi Anda, keindahan sejati bersemayam di dalam simetri keteraturan. Anda adalah penjaga aksara tepercaya yang memastikan data tidak tercecer berantakan, tata prosedur keuangan rapi, serta kepatuhan klerikal berjalan presisi tanpa cacat bias.",
+    strength: "Presisi ekstrem luar biasa, keandalan komitmen operasional, dan pilar ketertiban organisasi nomor satu.",
+    vulnerability: "Sangat risih atau stres cemas bila dihadapkan pada perubahan mendadak yang tidak berpanduan operasional tertulis baku.",
+    advice: "Sediakan ruang kosong kecil untuk kompromi improvisasi spontan; kelenturan bertindak darurat akan menyelamatkan sistem dari kekakuan patah."
+  }
+};
+
+export const CORE_FEAR_DESCRIPTIONS: Record<string, TypologyDetail> = {
+  "uselessness": {
+    title: "Inkompetensi & Ketiadaan Guna (Fear of Uselessness)",
+    badge: "Bintang Gerhana / Fear",
+    shortDesc: "Ketakutan purba bawah sadar akan kegagalan beroperasi fungsional, kemiskinan intelektual, serta ketiadaan taring kompetensi ahli.",
+    detailedDesc: "Ketakutan gerhana ini menyalakan sistem pertahanan kognitif Anda untuk menimbun arsitektur pengetahuan fungsional tiada henti. Anda cemas dianggap bodoh, kosong rumpang, atau tidak berdaya guna di hadapan lingkaran ahli luar.",
+    strength: "Daya dorong belajar raksasa, melahirkan keahlian spesifik mendalam, intelektualitas analitis matang.",
+    vulnerability: "Rentan memisahkan batin dari ketulusan relasi emosional sekitar (dingin) karena menganggap perasaan adalah kekonyolan.",
+    advice: "Sadari bahwa nilai diri Anda dilahirkan dari keberadaan jiwa rohani Anda yang murni, bukan semata dari piagam sertifikat keahlian Anda."
+  },
+  "corruptness": {
+    title: "Kebobrokan Moral & Dosa Kotor (Fear of Corruptness)",
+    badge: "Bintang Gerhana / Fear",
+    shortDesc: "Ketakutan purba akan hilangnya integritas, menjadi jahat, rusak moralnya, atau memancarkan keburukan batin cacat.",
+    detailedDesc: "Gerhana batin Anda menyalakan sensor evaluasi etika yang luar biasa kaku. Anda waspada cemas bila ada bagian tindakan harian Anda yang menyimpang dari kesucian panduan moralitas luhur atau mengotori integritas batin mulia.",
+    strength: "Kemurnian adiluhung karakter, keteladanan integritas tanpa tawar, pilar moral kebaikan komunitas.",
+    vulnerability: "Terjebak dalam rasa bersalah patologis kronis pada kekeliruan kecil dan rentan bersikap menghakimi kelalaian orang.",
+    advice: "Berikan ruang cinta pemaaf bagi kemanusiaan diri Anda yang tidak sempurna. Ketidaksempurnaan adalah wadah rahmat tumbuh."
+  },
+  "insignificance": {
+    title: "Hampanya Identitas & Kehilangan Ciri Khas (Fear of Insignificance)",
+    badge: "Bintang Gerhana / Fear",
+    shortDesc: "Ketakutan akan kehidupan yang datar hambar tanpa arti, kehilangan originalitas estetika, serta menjadi abu-abu biasa sosial.",
+    detailedDesc: "Gerhana Anda menyalakan hasrat meluap untuk tampil orisinal. Anda takut dicap ikut-ikutan (conformist), cemas bila emosi terdalam Anda disamaratakan hambar, atau hidup Anda selesai tanpa sempat melahirkan rasi ciri khas unik kepribadian murni Anda.",
+    strength: "Mata bor kreativitas estetika yang orisinal, kepekaan seni batin mendalam, keunikan kepribadian magnetis.",
+    vulnerability: "Rentan terperosok dalam melankolia drama kesepian sepi berkepanjangan dan merasa tidak ada satu pun jiwa yang paham.",
+    advice: "Bekerjasamalah dengan kesederhanaan hidup harian. Menjadi biasa dan tenang di bawah pohon rimbun adalah berkah kedamaian."
+  },
+  "vulnerability": {
+    title: "Kerentanan Terjajah & Ditindas (Fear of Vulnerability)",
+    badge: "Bintang Gerhana / Fear",
+    shortDesc: "Ketakutan bawah sadar akan kelemahan batin, terjajah oleh dominasi lawan, serta dikendalikan tanpa kedaulatan mandiri.",
+    detailedDesc: "Gerhana ksatria Anda menyalakan dinding baja otonomi diri yang sangat tebal. Anda melarang ketertundukan atau permohonan kasih yang rentan dieksploitasi sepihak. Menunjukkan air mata kerentanan dipandang laksana menyerahkan leher ke belati musuh.",
+    strength: "Kemandirian tak tergoyahkan, perlindungan tangguh bagi kaum lemah tertindas, keberanian memimpin garis depan.",
+    vulnerability: "Isolasi emosi parah dan rawan meletupkan kemarahan agresi untuk mengusir orang-orang terkasih yang berniat mendekat tulus.",
+    advice: "Sesungguhnya, membuka tirai kerentanan batin di hadapan orang terpercaya memerlukan keberanian ksatria tertinggi."
+  },
+  "rejection": {
+    title: "Penolakan Sosial & Kehabisan Cinta (Fear of Rejection)",
+    badge: "Bintang Gerhana / Fear",
+    shortDesc: "Ketakutan purba akan keterasingan komunal, dibuang dari lingkaran kehangatan persahabatan, serta tidak diinginkan.",
+    detailedDesc: "Gerhana ini menyalakan sistem radar empati penurut (people pleaser) yang luar biasa aktif. Anda waspada memindai ekspresi dingin wajah teman, siap memotong opini pribadi demi kenyamanan komunal agar penerimaan cinta tetap mengalir lancar.",
+    strength: "Kehangatan relasi sosial melimpah, kepedulian tinggi merawat keharmonisan hubungan komunal.",
+    vulnerability: "Kehilangan jangkar otentisitas kedaulatan diri akibat terlalu sibuk mendandani topeng kelayakan sosial.",
+    advice: "Kekasih sejati akan mencintai Anda utuh lengkap dengan batas ketidaksetujuan Anda harian. Beranilah menegakkan batasan diri."
+  },
+  "failure": {
+    title: "Kegagalan Fatal Menghilangkan Harga Diri (Fear of Failure)",
+    badge: "Bintang Gerhana / Fear",
+    shortDesc: "Ketakutan akan runtuhnya reputasi kinerja sosial, kekalahan persaingan prestasi, serta terlihat tidak bernilai.",
+    detailedDesc: "Gerhana ambisi Anda memaksa roda produktivitas Anda berputar 24 jam laksana robot tanpa henti. Anda menolak bersantai karena mengira nilai diri Anda lenyap seketika bila proyek yang Anda rintis dinilai tidak sukses berprestasi gemilang.",
+    strength: "Daya saing tangguh juara, kedisiplinan kerja raksasa, pelopor keberhasilan program fungsional.",
+    vulnerability: "Rentan didera kelelahan mental (burnout) akut, kecemasan obsesif reputasi, dan mengabaikan keseimbangan sirkulasi batin.",
+    advice: "Setiap proses jatuh-bangun adalah goresan sejarah yang memperluas kapasitas tampung kebijakan batin Anda. Bersantailah tenang."
+  },
+  "conflictBoundary": {
+    title: "Kekacauan Konflik Perusak Kedamaian (Fear of Conflict)",
+    badge: "Bintang Gerhana / Fear",
+    shortDesc: "Ketakutan bawah sadar akan turbulensi emosi sengketa perusak sterilisasi harmoni kehidupan batin.",
+    detailedDesc: "Gerhana damai Anda menyalakan insting menghindari konfrontasi secara ekstrem. Anda menyembunyikan amarah, menunda membicarakan masalah relational krusial, lari ke gawai sepi, demi membekukan perselisihan agar keheningan fiktif tetap terjaga.",
+    strength: "Peredam gejolak amarah nomor satu, penyemai harmoni penyejuk, serta pembawa mediasi perdamaian teduh.",
+    vulnerability: "Membiarkan manipulasi atau invasi batas otonomi diri berlangsung bertahun-tahun hingga meledak menjadi kepasifan mati.",
+    advice: "Konflik terukur yang dipandu oleh nalar jernih asertif tak lain adalah pisau operasi suci untuk menyembuhkan borok hubungan."
+  }
+};
+

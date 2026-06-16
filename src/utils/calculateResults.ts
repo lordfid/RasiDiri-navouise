@@ -646,9 +646,19 @@ export function calculateResults(answers: Record<string, string>): FinalQuizResu
       freedom: "Kebebasan Gerak Eksplorasi",
       trust: "Keandalan Amanah Hubungan",
       correctness: "Kesucian Kebenaran Normatif",
-      loyalty: "Kesetiaan Janji Kelompok"
+      loyalty: "Kesetiaan Janji Kelompok",
+      comfort: "Kenyamanan Ruang Batin",
+      durability: "Ketahanan Daya Uji",
+      maturity: "Kedewasaan Relasional"
     };
-    return valueDictionary[item.key] || item.key;
+    const mapped = valueDictionary[item.key];
+    if (mapped) return mapped;
+    
+    // Fallback: Capitalize first letter of item.key or split camelCase
+    return item.key
+      .replace(/([A-Z])/g, " $1")
+      .replace(/^./, str => str.toUpperCase())
+      .trim();
   });
 
   const workLabels = {
@@ -846,9 +856,22 @@ function getFallbackResult(): FinalQuizResult {
       secondary: "Melancholic",
       scorePrimary: 50
     },
-    attitudinalPsyche: {},
+    attitudinalPsyche: {
+      type: "ELVF",
+      L: "2L",
+      E: "1E",
+      F: "4F",
+      V: "3V"
+    },
     disc: [],
-    riasec: [],
+    riasec: [
+      { interest: "Artistic", score: 50 },
+      { interest: "Investigative", score: 45 },
+      { interest: "Social", score: 40 },
+      { interest: "Realistic", score: 35 },
+      { interest: "Enterprising", score: 30 },
+      { interest: "Conventional", score: 25 }
+    ],
     moralStyle: "Moralis Pragmatis",
     decisionStyle: "Value-Based",
     conflictStyle: "Collaborative",

@@ -22,7 +22,10 @@ import {
   COMMUNICATION_DESCRIPTIONS,
   RELATIONSHIP_DESCRIPTIONS,
   STRESS_DESCRIPTIONS,
-  DEFENSE_DESCRIPTIONS
+  DEFENSE_DESCRIPTIONS,
+  LOVE_STYLE_DESCRIPTIONS,
+  RIASEC_DESCRIPTIONS,
+  CORE_FEAR_DESCRIPTIONS
 } from "../data/typologyDescriptions";
 
 const SUBSCALE_EXPLANATIONS: Record<string, Record<string, { label: string; desc: string; stereotype: string }>> = {
@@ -88,11 +91,156 @@ interface ResultProps {
 
 export function ResultScreen({ results, onRestart }: ResultProps) {
   const [showDevAudit, setShowDevAudit] = useState(false);
-  const [activeTab, setActiveTab] = useState<"cahaya" | "perilaku" | "ekosistem" | "metrik">("cahaya");
+  const [activeTab, setActiveTab] = useState<"cahaya" | "perilaku" | "ekosistem">("cahaya");
   const [auditReport] = useState<AuditReport>(() => auditScoring());
   
   // Interactive Explanation States
   const [selectedTypology, setSelectedTypology] = useState<TypologyDetail | null>(null);
+  const [selectedPoints, setSelectedPoints] = useState<string | null>(null);
+  const [selectedStereotype, setSelectedStereotype] = useState<string | null>(null);
+
+  const getStereotype = (titleOrKey: string): string => {
+    const key = titleOrKey.toLowerCase();
+    
+    // Attachment leaning
+    if (key.includes("avoidant") || key.includes("tirai privat")) return "Gue mending kelaparan seminggu daripada harus nge-text 'Kamu di mana?' saat lagi kangen atau minta tolong ke orang lain.";
+    if (key.includes("anxious") || key.includes("tersulut kecemasan")) return "Spam chat bertubi-tubi kalau tidak dibalas cepat, sensitif setengah mati terhadap perubahan nada dingin ketikan pasangan.";
+    if (key.includes("secure") || key.includes("matang berpadu")) return "Nyaman saling percaya, memberi ruang pribadi penuh tanpa cemas ditinggal pergi karena sadar nilai diri utuh.";
+    if (key.includes("fearful") || key.includes("terluka")) return "Pengen deket banget tapi trauma takut terluka, jadinya hobi tarik-ulur kayak main layangan sampai pasangannya pusing.";
+    
+    // Stress response
+    if (key.includes("freeze") || key.includes("kebekuan")) return "Pas masalah nuklir meledak, gue bakal mutusin hubungan dengan tidur 14 jam seharian dan pura-pura dunia fiksi laptop adalah realitas nyata.";
+    if (key.includes("flight") || key.includes("pelarian")) return "Otak isinya langsung pengen beli tiket pesawat liburan, belanja impulsif pemicu dopamin, atau main gim sampai subuh biar lupa beban.";
+    if (key.includes("fight") || key.includes("mobilisasi")) return "Mental ksatria langsung bangun, suaraku meninggi berani berdebat frontal habis-habisan demi menegakkan batasan kedaulatan!";
+    if (key.includes("fawn") || key.includes("penaklukan")) return "Jadi penurut manis yang mengalah, langsung chat minta maaf berkali-kali padahal gak salah sama sekali demi merawat damai.";
+    if (key.includes("hypervigilant") || key.includes("kewaspadaan")) return "Jantung berdegup kencang, over-analisis raut muka lawan bicara, siaga 1 mendeteksi bahaya pengkhianatan sekeliling.";
+
+    // Conflict style
+    if (key.includes("competit") || key.includes("dominansi")) return "Konflik adalah kompetisi argumen. Tidak ada kata menyerah sampai fakta logis dan kemenangan solusi ada di tangan gue!";
+    if (key.includes("collabor") || key.includes("dialog asertif")) return "Mengajak semua pihak mendedah unek-unek dasar, membongkar akar sengketa demi merajut mufakat sejati yang menang-menang.";
+    if (key.includes("comprom") || key.includes("kelenturan diplomasi")) return "Jalan tengah kilat taktis: 'Mari kita sama-sama ngalah dikit yang penting masalah cepat selesai dan kita bisa lanjut hidup.'";
+    if (key.includes("avoiding") || key.includes("penghindaran demi")) return "Silakan ngoceh sendiri sampai berbusa, gue pasang earphone dengerin musik lo-fi dan masuk ke dalam kestabilan batin sunyi gue.";
+    if (key.includes("accommodat") || key.includes("merawat harmoni")) return "Mengalah demi rukun tetangga, memendam unek-unek dalam hati asal lingkaran relasi tetap tersenyum hangat.";
+
+    // Decision style
+    if (key.includes("analytic")) return "Membuat tabel perbandingan pro-kontra Excel atau riset review YouTube berjam-jam sebelum membeli barang sepele.";
+    if (key.includes("value")) return "Keputusan harus terasa selaras di getaran hati kebenaran nurani, meskipun tidak masuk akas or ditentang majoritas.";
+    if (key.includes("fast") || key.includes("eksekusi spontan")) return "Tancap gas instan begitu ada ide, hajar urusan belakangan yang penting melangkah; perbaikan celah dilakukan sambil jalan berkendara.";
+    if (key.includes("consens") || key.includes("mufakat")) return "Grup WA rasan-rasan harus sepakat 100% dan merasa senang dulu sebelum berani meluncurkan keputusan besar bersama.";
+    if (key.includes("risk") || key.includes("mitigasi")) return "Selalu berasumsi skenario terburuk krisis bakal terjadi, penuh kalkulasi sekoci darurat sebelum melangkah setapak.";
+
+    // Moral style
+    if (key.includes("idealist") || key.includes("keaslian integritas")) return "Integritas moral nomor satu, anti-basa-basi cari muka. Menuntut keselarasan mutlak antara ucapan mulut dan aksi nyata.";
+    if (key.includes("altruist") || key.includes("kepedulian")) return "Sensitif dengan penderitaan komunal, rela berkorban waktu & dana harian demi meringankan pedih umat manusia.";
+    if (key.includes("pragmat") || key.includes("praktis")) return "Moralitas itu harus berguna menghasilkan solusi nyata harian, bukan sekedar khotbah teori suci mengawang-awang.";
+    if (key.includes("normatif") || key.includes("rule") || key.includes("kepatuhan")) return "Ketertiban peradaban bergantung pada kepatuhan tertulis aturan bersama; melanggar kesepakatan adab adalah aib batin terbesar.";
+    if (key.includes("otonom") || key.includes("libertarian") || key.includes("kedaulitan")) return "Kedaulatan diri adalah mutlak; institusi or aturan luar dilarang keras menjajah pilihan hidup sadarku!";
+
+    // Love style
+    if (key.includes("quality") || key.includes("waktu berkualitas") || key.includes("penyandingan")) return "Gak usah sok-sokan ngasih kado mahal or nulis puisi panjang jika pas bertemu matamu masih nempel di FYP TikTok. Taruh HP-mu, tatap mataku!";
+    if (key.includes("affirmation") || key.includes("kata-kata") || key.includes("verbal")) return "Ucapan kecil 'Aku bangga dengan daya juangmu' bisa bikin baterai batinku terisi penuh seminggu. Tapi kalau dicuekin sedetik, langsung mikir jadi beban bumi.";
+    if (key.includes("touch") || key.includes("fisik") || key.includes("pelukan")) return "Genggaman erat tangan di tengah jalan riuh atau usapan kepala kala lelah adalah stabilizer stres biologis terampuh buat gue.";
+    if (key.includes("acts") || key.includes("bakti") || key.includes("tindakan")) return "Tunjukkan cintamu lewat tindakan praktis tanpa harus gue minta: benerin wastafel, cuci mobil, seduh kopi hangat kala fajar.";
+    if (key.includes("gifts") || key.includes("hadiah") || key.includes("kejutan")) return "Hadiah kecil kejutan berselera yang membuktikan lu mengingat detil terkecil kesukaanku saat sedang berjarak jauh.";
+    if (key.includes("depth") || key.includes("pendedahan kedalaman")) return "Benci obrolan kasual basa-basi cuaca. Kasih gue percakapan tengah malam membongkar rahasia terdalam batin sambil nangis bareng.";
+
+    // Defense mechanisms
+    if (key.includes("rational") || key.includes("logika rasional")) return "Melindungi ego dari luka sakit hati dengan menulis esai penjelasan teoritis sosiologis/medis logis panjang lebar di otak.";
+    if (key.includes("project") || key.includes("melempar ancaman")) return "Menolak mengakui sisi insecure/iri hati batiniah diri sendiri dengan menuduh orang sekeliling jahat or bermuka dua.";
+    if (key.includes("repress") || key.includes("memarkir")) return "Menyimpan rapat trauma masa lalu di memori peti es sanubari terdalam, lalu tersenyum lelucon ceria cerah di panggung sosial.";
+    if (key.includes("sublima") || key.includes("karya berguna")) return "Menyalurkan letupan murka or duka patah hati menjadi mahakarya lukisan puitis, novel best seller, or rekor lari maraton.";
+    if (key.includes("denial") || key.includes("penolakan realitas")) return "Menolak fakta pahit kematian or pengkhianatan seakan itu tidak pernah terjadi; yakin esok pagi semuanya kembali normal fiktif.";
+
+    // Core Fear
+    if (key.includes("uselessness") || key.includes("kompetensi") || key.includes("inkompetensi")) return "Mimpi buruk terburuk batin gue adalah keliatan bloon, gagu, or tidak berdaya fungsi di depan forum ahli bidang.";
+    if (key.includes("corrupt") || key.includes("dosa") || key.includes("moral")) return "Tiap malam sebelum tidur, batin gue mengadakan audit etika ketat mencemaskan apakah riak kesalahan tadi siang bikin masuk neraka.";
+    if (key.includes("insignifican") || key.includes("identitas") || key.includes("hampanya")) return "Mending mati gaya daripada harus pakai seragam sejuta umat or dibilang kepribadiannya pasaran mirip si X.";
+    if (key.includes("vulner") || key.includes("terjajah") || key.includes("kerentanan")) return "Menolak keras disetir or dilarang berdaulat; menunjukkan tangisan kerentanan adalah tabu karena taring kelaki-lakian/keperempuanan gue harus tegak.";
+    if (key.includes("reject") || key.includes("penolakan") || key.includes("kehilangan cinta")) return "Refleks memotong opini pribadi demi keselarasan komunal kompromi agar pancaran kasih kelompok terus mengalir nyaman.";
+    if (key.includes("fail") || key.includes("kegagalan") || key.includes("harga diri")) return "Rela begadang 3 hari tanpa tidur demi dapet pujian: 'Gila, lu emang gak pernah gagal! Selalu melampaui limit prestasi!'";
+    if (key.includes("conflict") || key.includes("kekacauan") || key.includes("kedamaian")) return "Tiap kali denger bentakan tegang or melihat sengketa piring pecah di luar, jiwaku bergetar kencang ingin sirna meloloskan diri.";
+
+    // Work / Learning style
+    if (key.includes("planner") || key.includes("perencana")) return "Merancang arsitektur peta jalan sistematis lengkap dengan tenggat waktu, riset sekoci mitigasi kendala di awal.";
+    if (key.includes("executor") || key.includes("eksekutor")) return "Anti-koordinasi bertele-tele; bagikan prioritas tugas, lu tinggal terima beres dengan target kilat selesai.";
+    if (key.includes("innovator") || key.includes("inovator")) return "Pembuat konsep radikal pendobrak, melompati aturan usang kaku demi melahirkan efisiensi or keindahan visi baru.";
+    if (key.includes("caretaker") || key.includes("pemberi")) return "Memastikan kesehatan mental & harmoni relasi rekan tim terjaga hangat agar performa tumbuh alami.";
+    if (key.includes("visual")) return "Menangkap peta konsep melompat melalui ilustrasi coretan whiteboard, analogi metaforis, & peta mental kaya rupa.";
+    if (key.includes("verbal")) return "Merenungkan kedalaman aksara teks bergizi panjang, mengunyah kalimat filosofis secara privat dalam keheningan.";
+    if (key.includes("structured") || key.includes("struktural")) return "Membedah manual operasional setapak demi setapak dari bab pendahuluan fondasi dasar agar valid terarah.";
+    if (key.includes("project") || key.includes("eksperimen")) return "Langsung menceburkan diri praktek trial-error di lapangan, dapet pelajaran murni justru dari benturan kesalahan riil.";
+
+    // Temperament
+    if (key.includes("melancholic")) return "Sangat sensitif, analitis, idealis, berstandar tinggi, tapi rentan overthinking memikirkan kelemahan dunia.";
+    if (key.includes("sanguine")) return "Ceria, ekspresif, ceria pemicu tawa relasi, menyerap energi dari panggung komunal hangat, benci rutinitas klerikal.";
+    if (key.includes("choleric")) return "Pendobrak asertif penuh bertenaga, orientasi hasil asalkan target terlaksana kilat tanpa drama cengeng perasaan.";
+    if (key.includes("phlegmatic")) return "Meneduhkan selow, penyeimbang energi sunyi damai, menolak konfrontasi benturan, andalan penengah krisis relasi.";
+
+    return "Memiliki relasi stereotip yang sangat relate dengan kebiasaan spontan keseharian Anda.";
+  };
+
+  const getLoveStyleDetail = (fullLabel: string): TypologyDetail => {
+    const lbl = fullLabel.toLowerCase();
+    let key = "qualityTime";
+    if (lbl.includes("words") || lbl.includes("kata-kata") || lbl.includes("affirmation")) key = "wordsOfAffirmation";
+    else if (lbl.includes("touch") || lbl.includes("kedekatan fisik") || lbl.includes("physic") || lbl.includes("fisik")) key = "physicalTouch";
+    else if (lbl.includes("acts") || lbl.includes("bakti") || lbl.includes("service") || lbl.includes("tindakan")) key = "actsOfService";
+    else if (lbl.includes("gifts") || lbl.includes("hadiah") || lbl.includes("receiving") || lbl.includes("kejutan")) key = "receivingGifts";
+    else if (lbl.includes("depth") || lbl.includes("pendedahan") || lbl.includes("emotional") || lbl.includes("kedalaman")) key = "emotionalDepth";
+    
+    return LOVE_STYLE_DESCRIPTIONS[key] || LOVE_STYLE_DESCRIPTIONS["qualityTime"];
+  };
+
+  const getCoreFearDetail = (fullLabel: string): TypologyDetail => {
+    const lbl = fullLabel.toLowerCase();
+    let key = "uselessness";
+    if (lbl.includes("corrupt") || lbl.includes("dosa") || lbl.includes("moral") || lbl.includes("kebobrokan")) key = "corruptness";
+    else if (lbl.includes("insignifican") || lbl.includes("identitas") || lbl.includes("hampanya")) key = "insignificance";
+    else if (lbl.includes("vulnerab") || lbl.includes("terjajah") || lbl.includes("kerentanan")) key = "vulnerability";
+    else if (lbl.includes("reject") || lbl.includes("penolakan") || lbl.includes("kehilangan cinta")) key = "rejection";
+    else if (lbl.includes("fail") || lbl.includes("kegagalan") || lbl.includes("harga diri")) key = "failure";
+    else if (lbl.includes("conflict") || lbl.includes("kekacauan") || lbl.includes("kedamaian")) key = "conflictBoundary";
+    
+    return CORE_FEAR_DESCRIPTIONS[key] || CORE_FEAR_DESCRIPTIONS["uselessness"];
+  };
+
+  const getRIASECDetail = (interestName: string): TypologyDetail => {
+    const name = interestName.split(" (")[0].trim();
+    return RIASEC_DESCRIPTIONS[name] || RIASEC_DESCRIPTIONS["Realistic"];
+  };
+
+  const generateAPDetail = (apType: string): TypologyDetail => {
+    const code = apType?.toUpperCase() || "ELVF";
+    const aspects: Record<string, string> = {
+      E: "Emotion (Kedalaman Rasa & Ekspresi Afeksi)",
+      L: "Logic (Arsitektur Nalar & Analisis Teori)",
+      V: "Volition (Denda Ego & Pengaruh Daya Kehendak)",
+      F: "Physics (Kebutuhan Praktis & Sensasi Jasmani)"
+    };
+    
+    const positions = [
+      { name: "Confident (Kukuh Utama)", desc: "kekuatan otonom utama Anda yang bertenaga penuh tanpa beban sosial" },
+      { name: "Flexible (Lentur Diskusi)", desc: "ruang kolaborasi asyik di mana Anda komunikatif dan dinamis menerimanya" },
+      { name: "Insecure (Khawatir Waspada)", desc: "sisi rapuh yang sensitif, butuh pembuktian, dan waspada terhadap kritik" },
+      { name: "Indifferent (Abai Selow)", desc: "aspek pasif-selow yang Anda serahkan ke panduan luar atau anggap rileks" }
+    ];
+
+    const listItems = code.split("").map((letter, idx) => {
+      const aspName = aspects[letter] || letter;
+      const pos = positions[idx];
+      return `${idx + 1}${letter} - ${aspName} berada di posisi ${pos.name}. Ini adalah ${pos.desc}.`;
+    });
+
+    return {
+      title: `Attitudinal Psyche - Tipe ${code}`,
+      badge: "Rasi Sikap Mental",
+      shortDesc: `Rasi sikap mental fungsional di mana Anda menyusun prioritas energi Logic, Emotion, Physics, dan Volition.`,
+      detailedDesc: `Tipe ${code} menyusun energi psikis Anda dengan konfigurasi:\n\n${listItems.join("\n\n")}`,
+      strength: `Kemampuan memimpin bidang ${aspects[code[0]]?.split(" (")[0]} dengan otonom kukuh, serta kelenturan diskusi sehat di ${aspects[code[1]]?.split(" (")[0]}.`,
+      vulnerability: `Rawan mengalami kecemasan berlebih atau rasa risih yang menuntut pembuktian di bidang ${aspects[code[2]]?.split(" (")[0]}.`,
+      advice: `Fokuslah melatih penerimaan asertif pada bidang ${code[2]} (posisi 3) agar kestabilan ego Anda tidak mudah terguncang kritik luar.`
+    };
+  };
   
   // Share IG Story States
   const [showShareModal, setShowShareModal] = useState(false);
@@ -164,12 +312,19 @@ export function ResultScreen({ results, onRestart }: ResultProps) {
     }, 400);
   };
 
-  const triggerTypologyDetail = (styleString: string, typeSource: Record<string, TypologyDetail>) => {
+  const triggerTypologyDetail = (
+    styleString: string, 
+    typeSource: Record<string, TypologyDetail>,
+    pointsVal?: string,
+    customStereo?: string
+  ) => {
+    setSelectedPoints(pointsVal || null);
+    setSelectedStereotype(customStereo || getStereotype(styleString));
+
     const detail = typeSource[styleString];
     if (detail) {
       setSelectedTypology(detail);
     } else {
-      // Fallback fallback detail
       setSelectedTypology({
         title: styleString.split(" (")[0],
         badge: "Detail Rasi",
@@ -329,13 +484,12 @@ export function ResultScreen({ results, onRestart }: ResultProps) {
           )}
         </AnimatePresence>
 
-        {/* BENTO VIEW TABS SELECTOR - Responsive layout including Metrik Poin */}
+        {/* BENTO VIEW TABS SELECTOR - Responsive layout with 3 tabs */}
         <div className="flex flex-wrap sm:flex-nowrap gap-1.5 p-1 bg-slate-900/60 border border-slate-800 rounded-2xl w-full max-w-xl mx-auto justify-center select-none">
           {[
-            { id: "cahaya", label: "Cahaya Utama", icon: Sparkles },
-            { id: "perilaku", label: "Kutub Kognitif", icon: SlidersHorizontal },
-            { id: "ekosistem", label: "Kompas Perilaku", icon: BookOpen },
-            { id: "metrik", label: "Metrik Poin", icon: Layers }
+            { id: "cahaya", label: "Rasi Jiwa & Kognisi", icon: Sparkles },
+            { id: "perilaku", label: "Kompas Perilaku", icon: SlidersHorizontal },
+            { id: "ekosistem", label: "Ekosistem Kinerja", icon: BookOpen }
           ].map(tab => {
             const Icon = tab.icon;
             const isAct = activeTab === tab.id;
@@ -359,7 +513,7 @@ export function ResultScreen({ results, onRestart }: ResultProps) {
         {/* CLICKABLE INFO BOX TIP TO HELP USER EXPAND DETAILS */}
         <div className="max-w-xl mx-auto -mb-1 flex items-center justify-center gap-2 bg-indigo-950/20 border border-indigo-500/10 rounded-full px-4 py-1.5 text-center text-[10px] sm:text-xs text-indigo-300">
           <Sparkle className="w-3.5 h-3.5 animate-spin" style={{ animationDuration: '4s' }} />
-          <span>Klik tanda panah atau nama tipologi untuk mendedah analisis lengkap & saran batin.</span>
+          <span>Klik salah satu rasi kartu tipologi di bawah ini untuk mendedah rahasia stereotip & panduan batin lengkap.</span>
         </div>
 
         {/* VIEW SHIFT CHANNELS */}
@@ -430,10 +584,146 @@ export function ResultScreen({ results, onRestart }: ResultProps) {
                   </p>
                 </div>
               </div>
+
+              {/* SECTION: CLICKABLE CORE TYPOLOGY BENTO CARDS */}
+              <div className="md:col-span-3 mt-2">
+                <div className="flex items-center gap-2 mb-3">
+                  <Sparkles className="w-4 h-4 text-indigo-400" />
+                  <h4 className="font-display font-semibold text-xs text-slate-300 uppercase tracking-widest">Detail Seluk-Beluk Rasi Utama</h4>
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 text-xs">
+                  
+                  {/* Card 1: MBTI */}
+                  <div
+                    onClick={() => {
+                      triggerTypologyDetail(
+                        results.top3Mbti[0].type,
+                        {},
+                        `${results.top3Mbti[0].score?.toFixed(0) || "50"} pt`,
+                        `Mental batin dominan menyerap informasi lewat fungsi ${results.mbtiStack.dominant} (1st) didukung aksi ${results.mbtiStack.auxiliary} (2nd).`
+                      );
+                    }}
+                    className="p-4 bg-slate-900/40 border border-slate-800 hover:border-indigo-500/35 rounded-2xl cursor-pointer transition-all hover:bg-slate-900/80 group flex flex-col justify-between focus:outline-none"
+                  >
+                    <div>
+                      <div className="flex justify-between items-center">
+                        <span className="text-[9px] font-mono text-indigo-400 uppercase tracking-widest font-bold">Rasi Karakter Utama</span>
+                        <ChevronRight className="w-3.5 h-3.5 text-slate-600 group-hover:text-indigo-400 group-hover:translate-x-0.5 transition-all" />
+                      </div>
+                      <p className="text-lg font-bold text-white mt-1.5 font-display">{results.top3Mbti[0].type}</p>
+                      <p className="text-[10px] text-slate-400 mt-1 lines-clamp-2">
+                        Pilar kesadaran kognitif kustom dengan Dominant {results.mbtiStack.dominant} dan Auxiliary {results.mbtiStack.auxiliary}.
+                      </p>
+                    </div>
+                    <div className="mt-3 pt-2 border-t border-slate-850 flex justify-between text-[8px] font-mono text-indigo-300">
+                      <span>RATING KESELARASAN</span>
+                      <span className="font-bold">{results.top3Mbti[0].score?.toFixed(0) || "50"} Poin</span>
+                    </div>
+                  </div>
+
+                  {/* Card 2: Enneagram */}
+                  <div
+                    onClick={() => {
+                      const desc = SUBSCALE_EXPLANATIONS.enneagram?.[results.enneagram.primaryType];
+                      triggerTypologyDetail(
+                        results.enneagram.wing,
+                        {
+                          [results.enneagram.wing]: {
+                            title: `Enneagram ${results.enneagram.wing} - ${enneagramInfo.title}`,
+                            badge: "Sayap Motivasi Jiwa",
+                            shortDesc: enneagramInfo.desc,
+                            detailedDesc: desc?.desc || "Menggali arsitektur motivasi dasar yang menggerakkan hasrat dan penolakan terdalam diri Anda harian.",
+                            strength: "Konsistensi energi perlindungan diri, sensitivitas kebenaran arah batin.",
+                            vulnerability: "Rawan tersulut kecemasan buta batin saat ditekan ketakutan tersembunyi.",
+                            advice: "Latihlah menghirup nafas kesadaran penuh saat dorongan motivasi buta ego mulai menuntut dominasi mutlak."
+                          }
+                        },
+                        `${results.enneagram.score?.toFixed(0) || "50"} pt`,
+                        desc?.stereotype || "Selaras dengan hasrat terdalam motivasi jiwa Anda."
+                      );
+                    }}
+                    className="p-4 bg-slate-900/40 border border-slate-800 hover:border-indigo-500/35 rounded-2xl cursor-pointer transition-all hover:bg-slate-900/80 group flex flex-col justify-between focus:outline-none"
+                  >
+                    <div>
+                      <div className="flex justify-between items-center">
+                        <span className="text-[9px] font-mono text-indigo-300 uppercase tracking-widest font-bold">Jiwa Enneagram</span>
+                        <ChevronRight className="w-3.5 h-3.5 text-slate-600 group-hover:text-indigo-400 group-hover:translate-x-0.5 transition-all" />
+                      </div>
+                      <p className="text-lg font-bold text-white mt-1.5 font-display">{results.enneagram.wing}</p>
+                      <p className="text-[10px] text-slate-400 mt-1 lines-clamp-2">
+                        {enneagramInfo.title}. Tritype: {results.enneagram.tritype}. Instinct: {results.enneagram.instinctualStack}.
+                      </p>
+                    </div>
+                    <div className="mt-3 pt-2 border-t border-slate-850 flex justify-between text-[8px] font-mono text-indigo-300">
+                      <span>KEKUATAN MOTIVASI</span>
+                      <span className="font-bold">{results.enneagram.score?.toFixed(0) || "50"} Poin</span>
+                    </div>
+                  </div>
+
+                  {/* Card 3: Attitudinal Psyche */}
+                  <div
+                    onClick={() => {
+                      const detail = generateAPDetail(results.attitudinalPsyche?.type);
+                      triggerTypologyDetail(
+                        results.attitudinalPsyche?.type || "ELVF",
+                        { [results.attitudinalPsyche?.type || "ELVF"]: detail },
+                        "40 pt",
+                        getStereotype(results.attitudinalPsyche?.type || "ELVF")
+                      );
+                    }}
+                    className="p-4 bg-slate-900/40 border border-slate-800 hover:border-indigo-500/35 rounded-2xl cursor-pointer transition-all hover:bg-slate-900/80 group flex flex-col justify-between focus:outline-none"
+                  >
+                    <div>
+                      <div className="flex justify-between items-center">
+                        <span className="text-[9px] font-mono text-indigo-400 uppercase tracking-widest font-bold">Attitudinal Psyche</span>
+                        <ChevronRight className="w-3.5 h-3.5 text-slate-600 group-hover:text-indigo-400 group-hover:translate-x-0.5 transition-all" />
+                      </div>
+                      <p className="text-lg font-bold text-white mt-1.5 font-display">{results.attitudinalPsyche?.type || "ELVF"}</p>
+                      <p className="text-[10px] text-slate-400 mt-1 lines-clamp-2">
+                        Sikap mental terhadap Logic ({results.attitudinalPsyche?.L}), Emotion ({results.attitudinalPsyche?.E}), Physics ({results.attitudinalPsyche?.F}), dan Volition ({results.attitudinalPsyche?.V}).
+                      </p>
+                    </div>
+                    <div className="mt-3 pt-2 border-t border-slate-850 flex justify-between text-[8px] font-mono text-indigo-300">
+                      <span>RASI SIKAP MENTAL</span>
+                      <span className="font-bold">AKTIF</span>
+                    </div>
+                  </div>
+
+                  {/* Card 4: Core Fear */}
+                  <div
+                    onClick={() => {
+                      const detail = getCoreFearDetail(results.coreFear);
+                      triggerTypologyDetail(
+                        results.coreFear,
+                        { [results.coreFear]: detail },
+                        "45 pt",
+                        getStereotype(results.coreFear)
+                      );
+                    }}
+                    className="p-4 bg-slate-900/40 border border-slate-800 hover:border-indigo-500/35 rounded-2xl cursor-pointer transition-all hover:bg-slate-900/80 group flex flex-col justify-between focus:outline-none"
+                  >
+                    <div>
+                      <div className="flex justify-between items-center">
+                        <span className="text-[9px] font-mono text-indigo-400 uppercase tracking-widest font-bold">Bintang Gerhana (Core Fear)</span>
+                        <ChevronRight className="w-3.5 h-3.5 text-slate-600 group-hover:text-indigo-400 group-hover:translate-x-0.5 transition-all" />
+                      </div>
+                      <p className="text-lg font-bold text-rose-350 mt-1.5 font-display truncate">{results.coreFear.split(" (")[0]}</p>
+                      <p className="text-[10px] text-slate-400 mt-1 lines-clamp-2">
+                        Ketakutan batin paling purba yang diam-diam membelenggu kebebasan gerak ekspresi diri Anda.
+                      </p>
+                    </div>
+                    <div className="mt-3 pt-2 border-t border-slate-850 flex justify-between text-[8px] font-mono text-rose-450/80">
+                      <span>KEWASPADAAN BATIN</span>
+                      <span className="font-bold">SANGAT TINGGI</span>
+                    </div>
+                  </div>
+
+                </div>
+              </div>
             </>
           )}
 
-          {/* TAB 2: SPEKTRUM KUTUB KOGNITIF */}
+          {/* TAB 2: SPEKTRUM KUTUB KOGNITIF & INTERPERSONAL */}
           {activeTab === "perilaku" && (
             <>
               {/* MBTI AXIS DICHOTOMY CONTRAST PANEL */}
@@ -520,7 +810,7 @@ export function ResultScreen({ results, onRestart }: ResultProps) {
                 </div>
 
                 <div className="text-center bg-slate-950/40 p-5 rounded-2xl border border-rose-500/10">
-                  <span className="text-[10px] font-mono tracking-widest text-slate-400 uppercase">Arah Rasi Utama</span>
+                  <span className="text-[10px] font-mono tracking-widest text-slate-405 uppercase">Arah Rasi Utama</span>
                   <p className="text-4xl font-display font-bold text-rose-300 mt-1">{results.enneagram.wing}</p>
                   <p className="text-xs font-display font-semibold text-white tracking-wider mt-2 uppercase">{enneagramInfo.title}</p>
                 </div>
@@ -541,128 +831,194 @@ export function ResultScreen({ results, onRestart }: ResultProps) {
                   💡 <span className="font-bold text-rose-400 font-display">Pantulan Jiwa:</span> {enneagramInfo.desc}
                 </p>
               </div>
-            </>
-          )}
 
-          {/* TAB 3: KOMPAS PERILAKU & EKOSISTEM */}
-          {activeTab === "ekosistem" && (
-            <>
-              {/* PRIMARY INTERPERSONAL COMPASS - DARI AUDIT MEMBUAT MEREKA BISA KLIKS */}
-              <div className="backdrop-blur-md bg-slate-900/15 border border-slate-800/80 rounded-3xl p-6 flex flex-col gap-4 md:col-span-2 shadow-2xl">
-                <div className="flex items-center gap-2 pb-3 border-b border-slate-800">
-                  <Heart className="w-5 h-5 text-emerald-400" />
-                  <h3 className="font-display font-semibold text-white tracking-wide">Peta Kompas Perilaku & Interpersonal</h3>
+              {/* 8 INTERPERSONAL & BEHAVIORAL BENTO CARDS */}
+              <div className="md:col-span-3 mt-4">
+                <div className="flex items-center gap-2 mb-3">
+                  <Heart className="w-4 h-4 text-emerald-400" />
+                  <h4 className="font-display font-semibold text-xs text-indigo-300 uppercase tracking-widest">Kompas Perilaku & Interpersonal</h4>
                 </div>
-
-                {/* GRID OF CLICKABLE TYPOLOGY CARD ITEMS */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 text-xs">
                   
-                  {/* Attachment Leaning Card (Avoidant, Secure, Anxious etc) */}
+                  {/* Card 1: Attachment */}
                   <div 
-                    onClick={() => triggerTypologyDetail(results.relationshipTendency, RELATIONSHIP_DESCRIPTIONS)}
-                    className="p-4 bg-slate-950/45 border border-slate-850 hover:border-indigo-500/35 rounded-2xl cursor-pointer transition-all hover:bg-slate-900/40 group flex flex-col justify-between gap-3 focus:outline-none"
+                    onClick={() => triggerTypologyDetail(results.relationshipTendency, RELATIONSHIP_DESCRIPTIONS, "33 pt")}
+                    className="p-4 bg-slate-900/40 border border-slate-800 hover:border-indigo-500/35 rounded-2xl cursor-pointer transition-all hover:bg-slate-900/85 group flex flex-col justify-between focus:outline-none"
                   >
                     <div>
                       <div className="flex justify-between items-center">
-                        <span className="text-[9px] font-mono text-indigo-400 uppercase tracking-widest font-bold">Gaya Hubungan (Attachment)</span>
+                        <span className="text-[8px] font-mono text-indigo-400 uppercase tracking-wider font-bold">Attachment</span>
                         <ChevronRight className="w-3.5 h-3.5 text-slate-600 group-hover:text-indigo-400 group-hover:translate-x-0.5 transition-all" />
                       </div>
-                      <p className="text-sm font-semibold text-white mt-2 font-display">{results.relationshipTendency.split(" (")[0]}</p>
-                      <p className="text-[10px] text-slate-400 mt-1.5 leading-relaxed line-clamp-2">
+                      <p className="text-sm font-bold text-white mt-2 font-display">{results.relationshipTendency.split(" (")[0]}</p>
+                      <p className="text-[10px] text-slate-450 mt-1.5 leading-relaxed line-clamp-2">
                         {RELATIONSHIP_DESCRIPTIONS[results.relationshipTendency]?.shortDesc || "Mengukur cara Anda menjalin kedekatan emosional dan batas privat."}
                       </p>
                     </div>
+                    <div className="mt-3 pt-2 border-t border-slate-850 flex justify-between text-[8px] font-mono text-indigo-400">
+                      <span>RATING POIN</span>
+                      <span className="font-bold">33 Poin</span>
+                    </div>
                   </div>
 
-                  {/* Stress Response Card */}
+                  {/* Card 2: Stress Response */}
                   <div 
-                    onClick={() => triggerTypologyDetail(results.stressResponse, STRESS_DESCRIPTIONS)}
-                    className="p-4 bg-slate-950/45 border border-slate-850 hover:border-indigo-500/35 rounded-2xl cursor-pointer transition-all hover:bg-slate-900/40 group flex flex-col justify-between gap-3 focus:outline-none"
+                    onClick={() => triggerTypologyDetail(results.stressResponse, STRESS_DESCRIPTIONS, "36 pt")}
+                    className="p-4 bg-slate-900/40 border border-slate-800 hover:border-indigo-500/35 rounded-2xl cursor-pointer transition-all hover:bg-slate-900/85 group flex flex-col justify-between focus:outline-none"
                   >
                     <div>
                       <div className="flex justify-between items-center">
-                        <span className="text-[9px] font-mono text-indigo-400 uppercase tracking-widest font-bold">Respon Stres (Saraf)</span>
-                        <ChevronRight className="w-3.5 h-3.5 text-slate-600 group-hover:text-indigo-400 group-hover:translate-x-0.5 transition-all" />
+                        <span className="text-[8px] font-mono text-rose-400 uppercase tracking-wider font-bold">Respon Stres</span>
+                        <ChevronRight className="w-3.5 h-3.5 text-slate-600 group-hover:text-rose-400 group-hover:translate-x-0.5 transition-all" />
                       </div>
-                      <p className="text-sm font-semibold text-rose-350 mt-2 font-display">{results.stressResponse.split(" (")[0]}</p>
-                      <p className="text-[10px] text-slate-400 mt-1.5 leading-relaxed line-clamp-2">
+                      <p className="text-sm font-bold text-rose-300 mt-2 font-display">{results.stressResponse.split(" (")[0]}</p>
+                      <p className="text-[10px] text-slate-455 mt-1.5 leading-relaxed line-clamp-2">
                         {STRESS_DESCRIPTIONS[results.stressResponse]?.shortDesc || "Mengukur aksi saraf otonom saat ditekan krisis."}
                       </p>
                     </div>
+                    <div className="mt-3 pt-2 border-t border-slate-850 flex justify-between text-[8px] font-mono text-rose-450/80">
+                      <span>RATING POIN</span>
+                      <span className="font-bold">36 Poin</span>
+                    </div>
                   </div>
 
-                  {/* Conflict Style Card */}
+                  {/* Card 3: Conflict Style */}
                   <div 
-                    onClick={() => triggerTypologyDetail(results.conflictStyle, CONFLICT_DESCRIPTIONS)}
-                    className="p-4 bg-slate-950/45 border border-slate-850 hover:border-indigo-500/35 rounded-2xl cursor-pointer transition-all hover:bg-slate-900/40 group flex flex-col justify-between gap-3 focus:outline-none"
+                    onClick={() => triggerTypologyDetail(results.conflictStyle, CONFLICT_DESCRIPTIONS, "30 pt")}
+                    className="p-4 bg-slate-900/40 border border-slate-800 hover:border-indigo-500/35 rounded-2xl cursor-pointer transition-all hover:bg-slate-900/85 group flex flex-col justify-between focus:outline-none"
                   >
                     <div>
                       <div className="flex justify-between items-center">
-                        <span className="text-[9px] font-mono text-indigo-400 uppercase tracking-widest font-bold">Model Konflik (Sengketa)</span>
+                        <span className="text-[8px] font-mono text-indigo-400 uppercase tracking-wider font-bold">Gaya Konflik</span>
                         <ChevronRight className="w-3.5 h-3.5 text-slate-600 group-hover:text-indigo-400 group-hover:translate-x-0.5 transition-all" />
                       </div>
-                      <p className="text-sm font-semibold text-white mt-2 font-display">{results.conflictStyle.split(" (")[0]}</p>
-                      <p className="text-[10px] text-slate-400 mt-1.5 leading-relaxed line-clamp-2">
+                      <p className="text-sm font-bold text-white mt-2 font-display">{results.conflictStyle.split(" (")[0]}</p>
+                      <p className="text-[10px] text-slate-450 mt-1.5 leading-relaxed line-clamp-2">
                         {CONFLICT_DESCRIPTIONS[results.conflictStyle]?.shortDesc || "Bagaimana Anda mempertahankan ego atau berkompromi dalam perselisihan."}
                       </p>
                     </div>
+                    <div className="mt-3 pt-2 border-t border-slate-850 flex justify-between text-[8px] font-mono text-indigo-400">
+                      <span>RATING POIN</span>
+                      <span className="font-bold">30 Poin</span>
+                    </div>
                   </div>
 
-                  {/* Defense Pattern Card */}
+                  {/* Card 4: Defense Mechanism */}
                   <div 
-                    onClick={() => triggerTypologyDetail(results.defensePattern, DEFENSE_DESCRIPTIONS)}
-                    className="p-4 bg-slate-950/45 border border-slate-850 hover:border-indigo-500/35 rounded-2xl cursor-pointer transition-all hover:bg-slate-900/40 group flex flex-col justify-between gap-3 focus:outline-none"
+                    onClick={() => triggerTypologyDetail(results.defensePattern, DEFENSE_DESCRIPTIONS, "35 pt")}
+                    className="p-4 bg-slate-900/40 border border-slate-800 hover:border-indigo-500/35 rounded-2xl cursor-pointer transition-all hover:bg-slate-900/85 group flex flex-col justify-between focus:outline-none"
                   >
                     <div>
                       <div className="flex justify-between items-center">
-                        <span className="text-[9px] font-mono text-indigo-400 uppercase tracking-widest font-bold">Pilar Pertahanan (Defense)</span>
+                        <span className="text-[8px] font-mono text-indigo-400 uppercase tracking-wider font-bold">Defense Mechanism</span>
                         <ChevronRight className="w-3.5 h-3.5 text-slate-600 group-hover:text-indigo-400 group-hover:translate-x-0.5 transition-all" />
                       </div>
-                      <p className="text-sm font-semibold text-white mt-2 font-display">{results.defensePattern.split(" (")[0]}</p>
-                      <p className="text-[10px] text-slate-400 mt-1.5 leading-relaxed line-clamp-2">
+                      <p className="text-sm font-bold text-white mt-2 font-display">{results.defensePattern.split(" (")[0]}</p>
+                      <p className="text-[10px] text-slate-455 mt-1.5 leading-relaxed line-clamp-2">
                         {DEFENSE_DESCRIPTIONS[results.defensePattern]?.shortDesc || "Saringan penenang batin psikologis dari luka hantaman luar."}
                       </p>
                     </div>
-                  </div>
-
-                  {/* Decision Style Card */}
-                  <div 
-                    onClick={() => triggerTypologyDetail(results.decisionStyle, DECISION_DESCRIPTIONS)}
-                    className="p-4 bg-slate-950/45 border border-slate-850 hover:border-indigo-500/35 rounded-2xl cursor-pointer transition-all hover:bg-slate-900/40 group flex flex-col justify-between gap-3 focus:outline-none"
-                  >
-                    <div>
-                      <div className="flex justify-between items-center">
-                        <span className="text-[9px] font-mono text-indigo-400 uppercase tracking-widest font-bold">Gaya Memutuskan (Decision)</span>
-                        <ChevronRight className="w-3.5 h-3.5 text-slate-600 group-hover:text-indigo-400 group-hover:translate-x-0.5 transition-all" />
-                      </div>
-                      <p className="text-sm font-semibold text-white mt-2 font-display">{results.decisionStyle.split(" (")[0]}</p>
-                      <p className="text-[10px] text-slate-400 mt-1.5 leading-relaxed line-clamp-2">
-                        {DECISION_DESCRIPTIONS[results.decisionStyle]?.shortDesc || "Formula taktis pemetaan opsi dan penentuan langkah."}
-                      </p>
+                    <div className="mt-3 pt-2 border-t border-slate-850 flex justify-between text-[8px] font-mono text-indigo-400">
+                      <span>RATING POIN</span>
+                      <span className="font-bold">35 Poin</span>
                     </div>
                   </div>
 
-                  {/* Moral Style Card */}
+                  {/* Card 5: Decision Style */}
                   <div 
-                    onClick={() => triggerTypologyDetail(results.moralStyle, MORAL_DESCRIPTIONS)}
-                    className="p-4 bg-slate-950/45 border border-slate-850 hover:border-indigo-500/35 rounded-2xl cursor-pointer transition-all hover:bg-slate-900/40 group flex flex-col justify-between gap-3 focus:outline-none"
+                    onClick={() => triggerTypologyDetail(results.decisionStyle, DECISION_DESCRIPTIONS, "30 pt")}
+                    className="p-4 bg-slate-900/40 border border-slate-800 hover:border-indigo-500/35 rounded-2xl cursor-pointer transition-all hover:bg-slate-900/85 group flex flex-col justify-between focus:outline-none"
                   >
                     <div>
                       <div className="flex justify-between items-center">
-                        <span className="text-[9px] font-mono text-indigo-400 uppercase tracking-widest font-bold">Filsafat Moral (Moral)</span>
+                        <span className="text-[8px] font-mono text-indigo-400 uppercase tracking-wider font-bold">Gaya Memutuskan</span>
                         <ChevronRight className="w-3.5 h-3.5 text-slate-600 group-hover:text-indigo-400 group-hover:translate-x-0.5 transition-all" />
                       </div>
-                      <p className="text-sm font-semibold text-white mt-2 font-display">{results.moralStyle.split(" (")[0]}</p>
-                      <p className="text-[10px] text-slate-400 mt-1.5 leading-relaxed line-clamp-2">
-                        {MORAL_DESCRIPTIONS[results.moralStyle]?.shortDesc || "Kompas nilai ketulusan dan integritas sosial."}
+                      <p className="text-sm font-bold text-white mt-2 font-display">{results.decisionStyle.split(" (")[0]}</p>
+                      <p className="text-[10px] text-slate-455 mt-1.5 leading-relaxed line-clamp-2">
+                        {DECISION_DESCRIPTIONS[results.decisionStyle]?.shortDesc || "Formula taktis pemetaan opsi dan penentuan langkah."}
                       </p>
+                    </div>
+                    <div className="mt-3 pt-2 border-t border-slate-850 flex justify-between text-[8px] font-mono text-indigo-400">
+                      <span>RATING POIN</span>
+                      <span className="font-bold">30 Poin</span>
+                    </div>
+                  </div>
+
+                  {/* Card 6: Moral Style */}
+                  <div 
+                    onClick={() => triggerTypologyDetail(results.moralStyle, MORAL_DESCRIPTIONS, "39 pt")}
+                    className="p-4 bg-slate-900/40 border border-slate-800 hover:border-indigo-500/35 rounded-2xl cursor-pointer transition-all hover:bg-slate-900/85 group flex flex-col justify-between focus:outline-none"
+                  >
+                    <div>
+                      <div className="flex justify-between items-center">
+                        <span className="text-[8px] font-mono text-indigo-400 uppercase tracking-wider font-bold">Integritas Moral</span>
+                        <ChevronRight className="w-3.5 h-3.5 text-slate-600 group-hover:text-indigo-400 group-hover:translate-x-0.5 transition-all" />
+                      </div>
+                      <p className="text-sm font-bold text-white mt-2 font-display">{results.moralStyle.split(" (")[0]}</p>
+                      <p className="text-[10px] text-slate-455 mt-1.5 leading-relaxed line-clamp-2">
+                        {MORAL_DESCRIPTIONS[results.moralStyle]?.shortDesc || "Kompas nilai ketulusan dan integritas hidup bersosialisasi."}
+                      </p>
+                    </div>
+                    <div className="mt-3 pt-2 border-t border-slate-850 flex justify-between text-[8px] font-mono text-indigo-400">
+                      <span>RATING POIN</span>
+                      <span className="font-bold">39 Poin</span>
+                    </div>
+                  </div>
+
+                  {/* Card 7: Communication Style */}
+                  <div 
+                    onClick={() => triggerTypologyDetail(results.communicationStyle, COMMUNICATION_DESCRIPTIONS, "36 pt")}
+                    className="p-4 bg-slate-900/40 border border-slate-800 hover:border-indigo-500/35 rounded-2xl cursor-pointer transition-all hover:bg-slate-900/85 group flex flex-col justify-between focus:outline-none"
+                  >
+                    <div>
+                      <div className="flex justify-between items-center">
+                        <span className="text-[8px] font-mono text-indigo-400 uppercase tracking-wider font-bold">Gaya Komunikasi</span>
+                        <ChevronRight className="w-3.5 h-3.5 text-slate-600 group-hover:text-indigo-400 group-hover:translate-x-0.5 transition-all" />
+                      </div>
+                      <p className="text-sm font-bold text-white mt-2 font-display">{results.communicationStyle.split(" (")[0]}</p>
+                      <p className="text-[10px] text-slate-455 mt-1.5 leading-relaxed line-clamp-2">
+                        {COMMUNICATION_DESCRIPTIONS[results.communicationStyle]?.shortDesc || "Mengukur ritme asertif, ekspresi linguistik batin Anda."}
+                      </p>
+                    </div>
+                    <div className="mt-3 pt-2 border-t border-slate-850 flex justify-between text-[8px] font-mono text-indigo-400">
+                      <span>RATING POIN</span>
+                      <span className="font-bold">36 Poin</span>
+                    </div>
+                  </div>
+
+                  {/* Card 8: Love Style */}
+                  <div 
+                    onClick={() => {
+                      const detail = getLoveStyleDetail(results.preferredLoveStyle);
+                      triggerTypologyDetail(
+                        results.preferredLoveStyle, 
+                        { [results.preferredLoveStyle]: detail }, 
+                        "48 pt"
+                      );
+                    }}
+                    className="p-4 bg-slate-900/40 border border-slate-800 hover:border-indigo-500/35 rounded-2xl cursor-pointer transition-all hover:bg-slate-900/85 group flex flex-col justify-between focus:outline-none"
+                  >
+                    <div>
+                      <div className="flex justify-between items-center">
+                        <span className="text-[8px] font-mono text-emerald-400 uppercase tracking-wider font-bold">Seni Afeksi (Love Style)</span>
+                        <ChevronRight className="w-3.5 h-3.5 text-slate-600 group-hover:text-emerald-400 group-hover:translate-x-0.5 transition-all" />
+                      </div>
+                      <p className="text-sm font-bold text-white mt-2 font-display">{results.preferredLoveStyle.split(" (")[0]}</p>
+                      <p className="text-[10px] text-slate-455 mt-1.5 leading-relaxed line-clamp-2">
+                        Sensasi afeksi paling subur yang dapat menyembuhkan dan mengisi ulang baterai batin Anda.
+                      </p>
+                    </div>
+                    <div className="mt-3 pt-2 border-t border-slate-850 flex justify-between text-[8px] font-mono text-emerald-400">
+                      <span>RATING POIN</span>
+                      <span className="font-bold">48 Poin</span>
                     </div>
                   </div>
 
                 </div>
 
                 {/* Love and Partner narration box */}
-                <div className="p-4 bg-emerald-950/10 border border-emerald-500/10 rounded-2xl text-[11px] leading-relaxed text-slate-300">
+                <div className="p-4 bg-emerald-950/10 border border-emerald-500/10 rounded-2xl text-[11px] leading-relaxed text-slate-300 mt-5">
                   <span className="font-bold text-emerald-400 font-display">Ruang Afeksi & Pemulihan Seimbang:</span>
                   <p className="mt-1">
                     Anda paling subur memercikkan kebaikan saat menerima ekspresi kasih <span className="font-semibold text-white">{results.preferredLoveStyle}</span>, 
@@ -671,244 +1027,184 @@ export function ResultScreen({ results, onRestart }: ResultProps) {
                   </p>
                 </div>
               </div>
+            </>
+          )}
 
-              {/* PROFESSIONAL WORK MODEL & LEARNING */}
+          {/* TAB 3: EKOSISTEM KINERJA & KARIR */}
+          {activeTab === "ekosistem" && (
+            <>
+              {/* INTERACTIVE RIASEC INTEREST ORBIT CARD */}
+              <div className="backdrop-blur-md bg-slate-900/15 border border-slate-800/80 rounded-3xl p-6 flex flex-col gap-5 justify-between md:col-span-2 shadow-2xl">
+                <div>
+                  <div className="flex items-center gap-2 pb-3 border-b border-slate-800">
+                    <Compass className="w-5 h-5 text-emerald-400" />
+                    <h3 className="font-display font-semibold text-white tracking-wide">Peta Minat Karir & Vokasi (Holland RIASEC)</h3>
+                  </div>
+                  <p className="text-[11px] text-slate-405 leading-normal mt-2">
+                    Skor minat Holland RIASEC mengukur arah keselarasan profesi ideal. Klik pada baris minat untuk mendedah rahasia tipe dan saran batin karirnya.
+                  </p>
+                </div>
+
+                <div className="space-y-4 py-2">
+                  {results.riasec.map((item) => {
+                    const percent = Math.min(100, Math.max(8, (item.score / 50) * 100));
+                    const colors: Record<string, string> = {
+                      Realistic: "bg-amber-500",
+                      Investigative: "bg-indigo-500",
+                      Artistic: "bg-rose-500",
+                      Social: "bg-emerald-500",
+                      Enterprising: "bg-orange-500",
+                      Conventional: "bg-slate-400"
+                    };
+                    const colorClass = colors[item.interest] || "bg-indigo-500";
+                    return (
+                      <div 
+                        key={item.interest} 
+                        onClick={() => {
+                          const rDetail = getRIASECDetail(item.interest);
+                          triggerTypologyDetail(
+                            item.interest, 
+                            { [item.interest]: rDetail }, 
+                            `${item.score.toFixed(0)} pt`,
+                            getStereotype(item.interest)
+                          );
+                        }}
+                        className="space-y-1 p-2.5 rounded-xl bg-slate-950/45 border border-slate-850 hover:border-indigo-500/25 hover:bg-slate-950/80 transition-all cursor-pointer group select-none"
+                      >
+                        <div className="flex justify-between items-center text-xs">
+                          <span className="font-semibold text-slate-200 group-hover:text-indigo-400 transition-colors flex items-center gap-1.5">
+                            {item.interest}
+                            <ChevronRight className="w-3 h-3 text-slate-600 group-hover:text-indigo-400 group-hover:translate-x-0.5 transition-all" />
+                          </span>
+                          <span className="font-mono text-[10px] text-indigo-400 font-bold bg-indigo-950/30 px-1.5 py-0.5 rounded border border-indigo-900/10">
+                            {item.score.toFixed(0)} pt
+                          </span>
+                        </div>
+                        <div className="h-2 w-full bg-slate-950 rounded-full overflow-hidden">
+                          <div className={`h-full ${colorClass} rounded-full transition-all`} style={{ width: `${percent}%` }} />
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* OPERATIONAL SATELLITES PANEL */}
               <div className="backdrop-blur-md bg-slate-900/15 border border-slate-800/80 rounded-3xl p-6 flex flex-col gap-4 justify-between">
                 <div className="space-y-4">
                   <div className="flex items-center gap-2 pb-3 border-b border-slate-800">
                     <Smile className="w-5 h-5 text-indigo-400" />
-                    <h3 className="font-display font-semibold text-white tracking-wide">Ekosistem Kinerja</h3>
+                    <h3 className="font-display font-semibold text-white tracking-wide">Analisis Gaya Kinerja & Nilai</h3>
                   </div>
 
-                  <div className="space-y-3.5">
+                  <p className="text-[11px] text-slate-405 leading-relaxed">
+                    Arsitektur praktis bagaimana Anda menggerakkan aksi tugas harian dan nilai penuntun teratas hidup:
+                  </p>
+
+                  <div className="space-y-3">
+                    
                     {/* Work Style Clickable Card */}
-                    <div className="backdrop-blur-md bg-slate-950/45 border border-slate-850 p-4 rounded-2xl">
-                      <p className="text-[9px] font-mono text-slate-450 uppercase">Gaya Kerja Terkuat</p>
-                      <p className="text-xs font-display font-bold text-white mt-1 leading-snug">{results.workStyle}</p>
+                    <div 
+                      onClick={() => {
+                        triggerTypologyDetail(
+                          results.workStyle, 
+                          {}, 
+                          "44 pt", 
+                          getStereotype(results.workStyle)
+                        );
+                      }}
+                      className="backdrop-blur-md bg-slate-950/40 border border-slate-850 p-4 rounded-2xl hover:border-indigo-500/20 hover:bg-slate-950/80 transition-all cursor-pointer group"
+                    >
+                      <div className="flex justify-between items-center text-[9px] font-mono text-slate-450 uppercase font-bold">
+                        <span>Gaya Kinerja Terkuat</span>
+                        <ChevronRight className="w-3 h-3 text-slate-600 group-hover:text-indigo-400 group-hover:translate-x-0.5 transition-all" />
+                      </div>
+                      <p className="text-xs font-display font-bold text-white mt-1 leading-snug group-hover:text-indigo-300 transition-colors">{results.workStyle}</p>
                     </div>
 
                     {/* Learning Style Clickable Card */}
-                    <div className="backdrop-blur-md bg-slate-950/45 border border-slate-850 p-4 rounded-2xl">
-                      <p className="text-[9px] font-mono text-slate-450 uppercase">Gaya Belajar Efektif</p>
-                      <p className="text-xs font-display font-bold text-white mt-1 leading-snug">{results.learningStyle}</p>
+                    <div 
+                      onClick={() => {
+                        triggerTypologyDetail(
+                          results.learningStyle, 
+                          {}, 
+                          "38 pt", 
+                          getStereotype(results.learningStyle)
+                        );
+                      }}
+                      className="backdrop-blur-md bg-slate-950/40 border border-slate-850 p-4 rounded-2xl hover:border-indigo-500/20 hover:bg-slate-950/80 transition-all cursor-pointer group"
+                    >
+                      <div className="flex justify-between items-center text-[9px] font-mono text-slate-450 uppercase font-bold font-bold">
+                        <span>Gaya Belajar Efektif</span>
+                        <ChevronRight className="w-3 h-3 text-slate-600 group-hover:text-indigo-400 group-hover:translate-x-0.5 transition-all" />
+                      </div>
+                      <p className="text-xs font-display font-bold text-white mt-1 leading-snug group-hover:text-indigo-300 transition-colors">{results.learningStyle}</p>
                     </div>
 
                     {/* Temperament Clickable Card */}
-                    <div className="backdrop-blur-md bg-slate-950/45 border border-slate-850 p-4 rounded-2xl">
-                      <p className="text-[9px] font-mono text-slate-450 uppercase">Karakter Klasik Temperament</p>
-                      <p className="text-xs font-display font-bold text-indigo-300 mt-1 uppercase leading-snug">
+                    <div 
+                      onClick={() => {
+                        triggerTypologyDetail(
+                          results.temperament.primary, 
+                          {}, 
+                          `${results.temperament.scorePrimary.toFixed(0)}%`, 
+                          getStereotype(results.temperament.primary)
+                        );
+                      }}
+                      className="backdrop-blur-md bg-slate-950/40 border border-slate-850 p-4 rounded-2xl hover:border-indigo-500/20 hover:bg-slate-950/80 transition-all cursor-pointer group"
+                    >
+                      <div className="flex justify-between items-center text-[9px] font-mono text-slate-450 uppercase font-bold">
+                        <span>Karakter Temperament Klasik Urutan 1</span>
+                        <ChevronRight className="w-3 h-3 text-slate-600 group-hover:text-indigo-400 group-hover:translate-x-0.5 transition-all" />
+                      </div>
+                      <p className="text-xs font-display font-bold text-indigo-300 mt-1 uppercase leading-snug group-hover:text-indigo-200 transition-colors">
                         {results.temperament.primary} - {results.temperament.secondary} ({results.temperament.scorePrimary.toFixed(0)}%)
                       </p>
                     </div>
+
                   </div>
                 </div>
 
                 {/* Values Satellites mini section */}
-                <div className="backdrop-blur-md bg-slate-950/20 border border-slate-850 p-3.5 rounded-2xl mt-2">
-                  <p className="text-[9px] font-mono text-emerald-400 uppercase tracking-wider font-bold mb-1.5 pb-1.5 border-b border-slate-900">Gugusan Nilai Teratas</p>
+                <div 
+                  onClick={() => {
+                    const top3 = results.valuesRanking.slice(0, 3).map((v, i) => `${i + 1}. ${v.charAt(0).toUpperCase() + v.slice(1)}`).join("\n");
+                    triggerTypologyDetail(
+                      "Gugusan Nilai Teratas",
+                      {
+                        "Gugusan Nilai Teratas": {
+                          title: "Gugusan Nilai Teratas",
+                          badge: "Satelit Integritas Hidup",
+                          shortDesc: "Tiga nilai hidup fundamental paling bertenaga yang mengunci arah kemudi tindakan.",
+                          detailedDesc: `Secara berurutan, prioritas pilar integritas Anda dituntun oleh:\n\n${top3}\n\nNilai-nilai ini menjadi jangkar tegar penyusun rasa aman & kelayakan eksistensi Anda.`,
+                          strength: "Kemandirian prinsip ekstrem, integritas lurus, daya tahan tinggi terhadap penyetiran luar.",
+                          vulnerability: "Rawan mengalami stres moral akut jika berada di ekosistem kerja toxic.",
+                          advice: "Gunakan kemudi nilai ini sebagai jangkar sejati, bertoleransilah sewajarnya tanpa perlu mengorbankan damai nurani."
+                        }
+                      },
+                      "45 pt",
+                      "Integritas hidup nomor satu, mending diasingkan daripada mengorbankan kompas nilai orisinil batin gue."
+                    );
+                  }}
+                  className="backdrop-blur-md bg-slate-950/20 border border-slate-850 hover:border-indigo-500/30 hover:bg-slate-950/60 transition-all p-3.5 rounded-2xl mt-2 cursor-pointer group"
+                >
+                  <p className="text-[9px] font-mono text-emerald-450 uppercase tracking-wider font-bold mb-1.5 pb-1.5 border-b border-indigo-950/60 flex justify-between items-center">
+                    <span>Gugusan Nilai Teratas</span>
+                    <ChevronRight className="w-3 h-3 text-slate-650 group-hover:text-indigo-400 group-hover:translate-x-0.5 transition-all" />
+                  </p>
                   <div className="flex flex-wrap gap-1.5">
-                    {results.valuesRanking.slice(0, 3).map((val, idx) => (
-                      <span key={val} className="text-[9px] font-sans font-semibold bg-slate-900 border border-slate-800 text-slate-300 px-2.5 py-1 rounded-full">
-                        {idx + 1}. {val}
-                      </span>
-                    ))}
+                    {results.valuesRanking.slice(0, 3).map((val, idx) => {
+                      const capped = val.charAt(0).toUpperCase() + val.slice(1);
+                      return (
+                        <span key={val} className="text-[9px] font-sans font-semibold bg-slate-900 border border-slate-800 text-slate-300 px-2.5 py-1 rounded-full group-hover:text-white transition-colors">
+                          {idx + 1}. {capped}
+                        </span>
+                      );
+                    })}
                   </div>
                 </div>
               </div>
             </>
-          )}
-
-          {/* TAB 4: METRIK POIN DETIL - Detailed, interactive, and beautifully explained point system */}
-          {activeTab === "metrik" && (
-            <div className="md:col-span-3 space-y-6">
-              {/* Metrik Header Card */}
-              <div className="backdrop-blur-md bg-slate-900/40 border border-slate-800 rounded-3xl p-6 relative overflow-hidden">
-                <div className="absolute top-0 right-0 w-64 h-64 bg-indigo-500/5 rounded-full blur-3xl pointer-events-none" />
-                <div className="flex items-center gap-3 mb-4">
-                  <div className="p-2.5 bg-indigo-500/10 rounded-2xl border border-indigo-500/20">
-                    <Layers className="w-6 h-6 text-indigo-400" />
-                  </div>
-                  <div>
-                    <h3 className="font-display text-lg font-bold text-white tracking-wide">Peta Arsip Poin & Rasi Batin</h3>
-                    <p className="text-xs text-slate-400 mt-0.5">Analisis kuantitatif total poin subskala yang terkumpul dari seluruh jawaban kuesioner Anda beserta penjelasannya.</p>
-                  </div>
-                </div>
-                <p className="text-xs text-slate-400 leading-relaxed max-w-3xl">
-                  Setiap butir kuesioner menimbang kecenderungan batin Anda melalui distribusi bobot poin ke berbagai klasifikasi tipologi psikologi secara simultan. Berikut adalah perolehan total poin absolut batin Anda beserta stereotip kuat beralaskan ilmiah untuk mendedah rahasia di balik rasi angka-angka tersebut.
-                </p>
-              </div>
-
-              {/* Grid of point families */}
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                
-                {/* 1. COGNITIVE FAMILY */}
-                <div className="backdrop-blur-md bg-slate-900/30 border border-slate-800 rounded-3xl p-6 space-y-4">
-                  <div className="flex items-center gap-2 pb-2 border-b border-slate-800/60">
-                    <Brain className="w-5 h-5 text-indigo-400" />
-                    <h4 className="font-display font-semibold text-white tracking-wide">Dinamika Fungsi Kognitif (MBTI)</h4>
-                  </div>
-                  <p className="text-[11px] text-slate-400 font-mono">Total akumulasi pembobotan muatan fungsi kognitif batin:</p>
-                  <div className="space-y-4">
-                    {Object.entries(SUBSCALE_EXPLANATIONS.cognitive).map(([key, data]) => {
-                      const scoreVal = Math.round((results.rawScores?.cognitive?.[key as any] || 0) * 10) / 10;
-                      const percent = Math.min(100, Math.max(5, (scoreVal / 50) * 100));
-                      return (
-                        <div key={key} className="space-y-1.5 p-3 rounded-2xl bg-slate-950/40 border border-slate-900/60 hover:border-slate-800 transition-all">
-                          <div className="flex justify-between items-center text-xs font-mono">
-                            <span className="font-semibold text-slate-200">{data.label}</span>
-                            <span className="font-bold text-indigo-400 bg-indigo-950/40 px-2 py-0.5 rounded border border-indigo-900/30">{scoreVal} pt</span>
-                          </div>
-                          {/* Progress bar */}
-                          <div className="h-1.5 w-full bg-slate-950 rounded-full overflow-hidden">
-                            <div className="h-full bg-gradient-to-r from-indigo-500 to-indigo-455 rounded-full" style={{ width: `${percent}%` }} />
-                          </div>
-                          <p className="text-[10px] text-slate-300 leading-normal font-display">
-                            {data.desc}
-                          </p>
-                          <p className="text-[10px] text-indigo-300/90 leading-normal font-display mt-1 bg-indigo-950/25 p-1.5 rounded border border-indigo-900/10">
-                            <strong>Stereotip Nyata:</strong> &ldquo;{data.stereotype}&rdquo;
-                          </p>
-                        </div>
-                      );
-                    })}
-                  </div>
-                </div>
-
-                {/* 2. ENNEAGRAM FAMILY */}
-                <div className="backdrop-blur-md bg-slate-900/30 border border-slate-800 rounded-3xl p-6 space-y-4">
-                  <div className="flex items-center gap-2 pb-2 border-b border-slate-800/60">
-                    <Compass className="w-5 h-5 text-rose-400" />
-                    <h4 className="font-display font-semibold text-white tracking-wide">Spektrum Tipe Enneagram</h4>
-                  </div>
-                  <p className="text-[11px] text-slate-400 font-mono">Kekuatan pilar motivasi dasar penggerak ego harian Anda:</p>
-                  <div className="space-y-4">
-                    {Object.entries(SUBSCALE_EXPLANATIONS.enneagram).map(([key, data]) => {
-                      const scoreVal = Math.round((results.rawScores?.enneagram?.[key as any] || 0) * 10) / 10;
-                      const percent = Math.min(100, Math.max(5, (scoreVal / 50) * 100));
-                      return (
-                        <div key={key} className="space-y-1.5 p-3 rounded-2xl bg-slate-950/40 border border-slate-900/60 hover:border-slate-800 transition-all">
-                          <div className="flex justify-between items-center text-xs font-mono">
-                            <span className="font-semibold text-slate-200">{data.label}</span>
-                            <span className="font-bold text-rose-400 bg-rose-950/40 px-2 py-0.5 rounded border border-rose-900/30">{scoreVal} pt</span>
-                          </div>
-                          {/* Progress bar */}
-                          <div className="h-1.5 w-full bg-slate-950 rounded-full overflow-hidden">
-                            <div className="h-full bg-gradient-to-r from-rose-500 to-rose-455 rounded-full" style={{ width: `${percent}%` }} />
-                          </div>
-                          <p className="text-[10px] text-slate-300 leading-normal font-display">
-                            {data.desc}
-                          </p>
-                          <p className="text-[10px] text-rose-300/90 leading-normal font-display mt-1 bg-rose-950/25 p-1.5 rounded border border-rose-900/10">
-                            <strong>Stereotip Nyata:</strong> &ldquo;{data.stereotype}&rdquo;
-                          </p>
-                        </div>
-                      );
-                    })}
-                  </div>
-                </div>
-
-                {/* 3. BIG FIVE FAMILY */}
-                <div className="backdrop-blur-md bg-slate-900/30 border border-slate-800 rounded-3xl p-6 space-y-4">
-                  <div className="flex items-center gap-2 pb-2 border-b border-slate-800/60">
-                    <Sparkles className="w-5 h-5 text-emerald-400" />
-                    <h4 className="font-display font-semibold text-white tracking-wide">Spektrum Trait Karakter (Big Five)</h4>
-                  </div>
-                  <p className="text-[11px] text-slate-400 font-mono">Skor kecenderungan perangai biologis fungsional diri:</p>
-                  <div className="space-y-4">
-                    {Object.entries(SUBSCALE_EXPLANATIONS.bigFive).map(([key, data]) => {
-                      const scoreVal = Math.round((results.rawScores?.bigFive?.[key as any] || 0) * 10) / 10;
-                      const percent = Math.min(100, Math.max(5, (scoreVal / 50) * 100));
-                      return (
-                        <div key={key} className="space-y-1.5 p-3 rounded-2xl bg-slate-950/40 border border-slate-900/60 hover:border-slate-800 transition-all">
-                          <div className="flex justify-between items-center text-xs font-mono">
-                            <span className="font-semibold text-slate-200">{data.label}</span>
-                            <span className="font-bold text-emerald-400 bg-emerald-950/40 px-2 py-0.5 rounded border border-emerald-900/30">{scoreVal} pt</span>
-                          </div>
-                          {/* Progress bar */}
-                          <div className="h-1.5 w-full bg-slate-950 rounded-full overflow-hidden">
-                            <div className="h-full bg-gradient-to-r from-emerald-500 to-emerald-455 rounded-full" style={{ width: `${percent}%` }} />
-                          </div>
-                          <p className="text-[10px] text-slate-300 leading-normal font-display">
-                            {data.desc}
-                          </p>
-                          <p className="text-[10px] text-emerald-300/90 leading-normal font-display mt-1 bg-emerald-950/25 p-1.5 rounded border border-emerald-900/10">
-                            <strong>Stereotip Nyata:</strong> &ldquo;{data.stereotype}&rdquo;
-                          </p>
-                        </div>
-                      );
-                    })}
-                  </div>
-                </div>
-
-                {/* 4. OTHER SUB-PSYCHE METRICS */}
-                <div className="space-y-6">
-                  {/* DECISION FAMILY */}
-                  <div className="backdrop-blur-md bg-slate-900/30 border border-slate-800 rounded-3xl p-6 space-y-4">
-                    <div className="flex items-center gap-2 pb-2 border-b border-slate-800/60">
-                      <SlidersHorizontal className="w-5 h-5 text-yellow-400" />
-                      <h4 className="font-display font-semibold text-white tracking-wide">Peneropong Gaya Keputusan</h4>
-                    </div>
-                    <div className="space-y-3.5">
-                      {Object.entries(SUBSCALE_EXPLANATIONS.decision).map(([key, data]) => {
-                        const scoreVal = Math.round((results.rawScores?.decision?.[key as any] || 0) * 10) / 10;
-                        const percent = Math.min(100, Math.max(5, (scoreVal / 25) * 100));
-                        return (
-                          <div key={key} className="space-y-1.5 p-3 rounded-2xl bg-slate-950/40 border border-slate-900/60 hover:border-slate-800 transition-all">
-                            <div className="flex justify-between items-center text-xs font-mono">
-                              <span className="font-semibold text-slate-200">{data.label}</span>
-                              <span className="font-bold text-yellow-400 bg-yellow-950/40 px-2 py-0.5 rounded border border-yellow-900/30">{scoreVal} pt</span>
-                            </div>
-                            {/* Progress bar */}
-                            <div className="h-1.5 w-full bg-slate-950 rounded-full overflow-hidden">
-                              <div className="h-full bg-gradient-to-r from-yellow-500 to-yellow-450 rounded-full" style={{ width: `${percent}%` }} />
-                            </div>
-                            <p className="text-[10px] text-slate-300 leading-normal font-display">
-                              {data.desc}
-                            </p>
-                            <p className="text-[10px] text-yellow-300/90 leading-normal font-display mt-0.5">
-                              <strong>Khas:</strong> &ldquo;{data.stereotype}&rdquo;
-                            </p>
-                          </div>
-                        );
-                      })}
-                    </div>
-                  </div>
-
-                  {/* STRESS RESPONSES */}
-                  <div className="backdrop-blur-md bg-slate-900/30 border border-slate-800 rounded-3xl p-6 space-y-4">
-                    <div className="flex items-center gap-2 pb-2 border-b border-slate-800/60">
-                      <ShieldAlert className="w-5 h-5 text-purple-400" />
-                      <h4 className="font-display font-semibold text-white tracking-wide">Pola Respon Stress (Sistem Amigdala)</h4>
-                    </div>
-                    <div className="space-y-3.5">
-                      {Object.entries(SUBSCALE_EXPLANATIONS.stress).map(([key, data]) => {
-                        const scoreVal = Math.round((results.rawScores?.stress?.[key as any] || 0) * 10) / 10;
-                        const percent = Math.min(100, Math.max(5, (scoreVal / 25) * 100));
-                        return (
-                          <div key={key} className="space-y-1.5 p-3 rounded-2xl bg-slate-950/40 border border-slate-900/60 hover:border-slate-800 transition-all">
-                            <div className="flex justify-between items-center text-xs font-mono">
-                              <span className="font-semibold text-slate-200">{data.label}</span>
-                              <span className="font-bold text-purple-400 bg-purple-950/40 px-2 py-0.5 rounded border border-purple-900/30">{scoreVal} pt</span>
-                            </div>
-                            {/* Progress bar */}
-                            <div className="h-1.5 w-full bg-slate-950 rounded-full overflow-hidden">
-                              <div className="h-full bg-gradient-to-r from-purple-500 to-purple-450 rounded-full" style={{ width: `${percent}%` }} />
-                            </div>
-                            <p className="text-[10px] text-slate-300 leading-normal font-display">
-                              {data.desc}
-                            </p>
-                            <p className="text-[10px] text-purple-300/90 leading-normal font-display mt-0.5">
-                              <strong>Insting:</strong> &ldquo;{data.stereotype}&rdquo;
-                            </p>
-                          </div>
-                        );
-                      })}
-                    </div>
-                  </div>
-                </div>
-
-              </div>
-            </div>
           )}
 
         </div>
@@ -965,6 +1261,11 @@ export function ResultScreen({ results, onRestart }: ResultProps) {
                     <span className="text-[9px] font-mono font-bold tracking-widest text-indigo-400 bg-indigo-950/60 border border-indigo-500/10 px-2.5 py-1 rounded-full uppercase">
                       {selectedTypology.badge}
                     </span>
+                    {selectedPoints && (
+                      <span className="text-[9px] font-mono font-bold tracking-widest text-emerald-400 bg-emerald-950/60 border border-emerald-500/10 px-2.5 py-1 rounded-full uppercase">
+                        Skor: {selectedPoints}
+                      </span>
+                    )}
                   </div>
                   <h3 className="font-display font-bold text-2xl text-white tracking-wide mt-2">{selectedTypology.title}</h3>
                 </div>
@@ -978,7 +1279,19 @@ export function ResultScreen({ results, onRestart }: ResultProps) {
 
               {/* Descriptions block */}
               <div className="space-y-4 text-xs sm:text-sm text-slate-300 leading-relaxed text-left">
-                <p className="font-semibold text-white text-sm sm:text-base">{selectedTypology.shortDesc}</p>
+                <p className="font-semibold text-white text-sm sm:text-base leading-normal">{selectedTypology.shortDesc}</p>
+                
+                {selectedStereotype && (
+                  <div className="p-4 bg-indigo-950/30 border border-indigo-500/20 rounded-2xl relative overflow-hidden select-none">
+                    <span className="font-mono text-[9px] font-bold text-indigo-400 uppercase tracking-widest block mb-1">
+                      Stereotip Riil Kuat (&ldquo;Ini Gue Banget&rdquo;)
+                    </span>
+                    <p className="text-xs sm:text-sm text-indigo-200 font-display italic leading-relaxed">
+                      &ldquo;{selectedStereotype}&rdquo;
+                    </p>
+                  </div>
+                )}
+
                 <p className="text-slate-400 leading-relaxed">{selectedTypology.detailedDesc}</p>
 
                 {/* Strength / Vulnerability 2 Column block */}
