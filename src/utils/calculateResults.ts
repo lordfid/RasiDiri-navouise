@@ -376,10 +376,11 @@ export function calculateResults(answers: Record<string, string>): FinalQuizResu
     // Dynamic type support from question choices
     const support = raw.mbtiTypeSupport[type] || 0;
 
-    // Beautiful matching formula
+    // Beautiful matching formula (normalized scale to avoid capping saturation bias)
     const stackScore = (dom * 1.5) + (aux * 1.25) + (tert * 0.8) + ((100 - inf) * 0.4);
+    const normalizedStack = (stackScore / 395) * 100;
     const dichotomyBonus = (axisMatch / 400) * 100;
-    const finalMatchScore = Math.round((stackScore * 0.5) + (dichotomyBonus * 0.4) + (support * 10));
+    const finalMatchScore = Math.round((normalizedStack * 0.6) + (dichotomyBonus * 0.4) + (support * 10));
 
     return { type, score: Math.max(0, Math.min(100, finalMatchScore)) };
   }).sort((a, b) => b.score - a.score);
