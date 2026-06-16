@@ -1,0 +1,6 @@
+{
+  "name": "Rasi Diri",
+  "description": "Sebuah pengalaman refleksi diri mendalam yang merekonstruksi rasi kepribadian Anda melalui kuesioner ringan berbobot matematis presisi.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
